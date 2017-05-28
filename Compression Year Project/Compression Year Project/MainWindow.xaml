@@ -5,11 +5,26 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Compression_Year_Project"
         mc:Ignorable="d"
-        Title="The Compression Project" Height="350" Width="525">
-    <Grid>
-        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50">
-            My Compression algorithm
-        </TextBlock>
-        
-    </Grid>
+        Title="The Compression Project" Height="400" Width="600">
+
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="_Open" Click="OpenFile_Click"/>
+                <Separator/>
+                <MenuItem Header="_Exit" Click="Exit_Click"/>
+            </MenuItem>
+        </Menu>
+        <TextBox AcceptsReturn="True"/>
+        <Canvas Height="347" VerticalAlignment="Top" Width="587" AllowDrop="True" PreviewDrop="Canvas_PreviewDrop"
+                PreviewDragOver="Canvas_PreviewDragOver"
+                PreviewDragEnter="Canvas_PreviewDragOver">
+            <Button Content="Compress" Width="212" Height="56"/>
+            <Button Content="Extract" Canvas.Left="212" Width="189" Height="56"/>
+            <Button Content="Show Results" Canvas.Left="401" Width="185" Height="56"/>
+            <TextBlock FontSize="14" Name="txtMain"  TextWrapping="Wrap" Canvas.Top="56" Height="291" Width="586"/>
+        </Canvas>
+    </DockPanel>
+
+
 </Window>
