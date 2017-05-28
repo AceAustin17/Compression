@@ -1,0 +1,15 @@
+﻿<Window x:Class="Compression_Year_Project.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Compression_Year_Project"
+        mc:Ignorable="d"
+        Title="The Compression Project" Height="350" Width="525">
+    <Grid>
+        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50">
+            My Compression algorithm
+        </TextBlock>
+        
+    </Grid>
+</Window>
