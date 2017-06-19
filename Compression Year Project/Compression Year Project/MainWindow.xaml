@@ -4,27 +4,31 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Compression_Year_Project"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         Title="The Compression Project" Height="400" Width="600">
 
     <DockPanel>
-        <Menu DockPanel.Dock="Top">
-            <MenuItem Header="_File">
-                <MenuItem Header="_Open" Click="OpenFile_Click"/>
-                <Separator/>
-                <MenuItem Header="_Exit" Click="Exit_Click"/>
-            </MenuItem>
-        </Menu>
-        <TextBox AcceptsReturn="True"/>
+        <WrapPanel DockPanel.Dock="Top">
+            <Menu>
+                <MenuItem Header="_File">
+                    <MenuItem Header="_Open" Click="OpenFile_Click"/>
+                    <MenuItem Header="_Exit" Click="Exit_Click"/>
+                </MenuItem>
+                <MenuItem Header="_Help"></MenuItem>
+            </Menu>
+        </WrapPanel>
+
         <Canvas Height="347" VerticalAlignment="Top" Width="587" AllowDrop="True" PreviewDrop="Canvas_PreviewDrop"
                 PreviewDragOver="Canvas_PreviewDragOver"
                 PreviewDragEnter="Canvas_PreviewDragOver">
             <Button Content="Compress" Width="212" Height="56"/>
             <Button Content="Extract" Canvas.Left="212" Width="189" Height="56"/>
             <Button Content="Show Results" Canvas.Left="401" Width="185" Height="56"/>
-            <TextBlock FontSize="14" Name="txtMain"  TextWrapping="Wrap" Canvas.Top="56" Height="291" Width="586"/>
+            <TextBlock FontSize="14" x:Name="txtMain"  TextWrapping="Wrap" Canvas.Top="56" Height="213" Width="577" Canvas.Left="10"/>
+            <Button  Style="{StaticResource MaterialDesignFloatingActionButton}" Canvas.Left="502" Canvas.Top="252" Width="54" Height="54" FontSize="36" Click="OpenFile_Click">
+                <materialDesign:PackIcon Kind="Plus" Height="28" Width="28" />
+            </Button>
         </Canvas>
     </DockPanel>
-
-
 </Window>
