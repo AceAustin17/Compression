@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
 using Microsoft.Win32;
+using ANeuralNetwork;
 
 namespace Compression_Year_Project
 {
@@ -25,6 +26,11 @@ namespace Compression_Year_Project
         public MainWindow()
         {
             InitializeComponent();
+            int[] ls = new int[3] { 1, 2, 1 };
+            ActivationFunction[] af = new ActivationFunction[3] { ActivationFunction.None,
+                                                                ActivationFunction.Sigmoid,
+                                                                ActivationFunction.Sigmoid };
+            BackPropNetwork bp = new BackPropNetwork(ls,af);
         }
 
         private void OpenFile_Click(object sender, RoutedEventArgs e)

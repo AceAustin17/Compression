@@ -106,5 +106,11 @@
   <ItemGroup>
     <Resource Include="Arkangl300-Methodic-Folders-Remix-Document.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ANeuralNetwork\ANeuralNetwork.csproj">
+      <Project>{09dc639a-5273-4f5b-8098-6c2e0b3ac65a}</Project>
+      <Name>ANeuralNetwork</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
