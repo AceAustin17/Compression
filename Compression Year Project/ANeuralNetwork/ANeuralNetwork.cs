@@ -135,7 +135,7 @@ namespace ANeuralNetwork
             }
             //initialise weights
 
-            for( int l = 0; l < numLayers;l++)
+            for (int l = 0; l < numLayers; l++)
             {
                 for (int j = 0; j < layerSize[l]; j++)
                 {
@@ -154,44 +154,159 @@ namespace ANeuralNetwork
                     }
                 }
 
-                
+
             }
         }
-    }
 
-    public static class Gaussian
-    {
-        private static Random ran = new Random();
-        public static void getRandomGaussian(double mean, double stddev, out double val1, out double val2)
+        //Methods
+        public void run(ref double[] input, out double[] output)
         {
-            double u, s, v, t;
-
-            do
+            if (input.Length != inputSize)
             {
-                u = 2 * ran.NextDouble() - 1;
-                v = 2 * ran.NextDouble() - 1;
+                throw new ArgumentException("Not enough data");
+            }
 
-            } while (u * u + v * v > 1 || u == 0 && v == 0);
+            output = new double[layerSize[numLayers - 1]];
 
-            s = u * u + v * v;
-            t = Math.Sqrt((-2.0 * Math.Log(s) / s));
+            //running the network
+            for (int l = 0; l < numLayers; l++)
+            {
+                for (int j = 0; j < layerSize[l]; j++)
+                {
+                    double sum = 0.0;
+                    for (int i = 0; i < (l == 0 ? inputSize : layerSize[l - 1]); i++)
+                    {
+                        sum += weights[l][i][j] * (l == 0 ? input[i] : layerOutput[l - 1][i]);
+                        sum += bias[l][j];
 
-            val1 = stddev * u * t + mean;
-            val2 = stddev * v  * t + mean;
+                        inputLayer[l][j] = sum;
+
+                        layerOutput[l][j] = ActivationFunctions.Evaluate(activFunctions[l], sum);
+
+                    }
+                }
+            }
+
+            for (int i = 0; i < layerSize[numLayers - 1]; i++)
+            {
+                output[i] = layerOutput[numLayers - 1][i];
+
+            }
         }
 
-        public static double getRandomGaussian(double mean, double stddev)
+        public double train(ref double[] input, ref double[] desired, double trainingRate, double momentum)
         {
-            double val1, val2;
-            getRandomGaussian(mean, stddev, out val1, out val2);
+            if (input.Length != inputSize)
+            {
+                throw new ArgumentException("Ivalid input");
+            }
 
-            return val1;
+            if (desired.Length != layerSize[numLayers - 1])
+            {
+                throw new ArgumentException("Inalid parameter", "desired");
+
+            }
+            double error = 0.0;
+            double sum = 0.0;
+            double biasDelta = 0.0;
+            double weightdelta = 0.0;
+
+            double[] output = new double[layerSize[numLayers - 1]];
+
+            // running the network
+            run(ref input, out output);
+
+            //back propagating
+            for (int l = numLayers - 1; l >= 0; l--)
+            {
+                if (l == numLayers - 1)
+                {
+                    for (int k = 0; k < layerSize[l]; k++)
+                    {
+                        delta[l][k] = output[k] - desired[k];
+
+                        error += Math.Pow(delta[l][k], 2);
+
+                        delta[l][k] *= ActivationFunctions.EvaluateDerivative(activFunctions[l], inputLayer[l][k]);
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < layerSize[l]; i++)
+                    {
+                        sum = 0.0;
+                        for (int j = 0; j < layerSize[l + 1]; j++)
+                        {
+                            sum += weights[l + 1][i][j] + delta[l + 1][j];
+                        }
+                        sum *= ActivationFunctions.EvaluateDerivative(activFunctions[l], inputLayer[l][i]);
+
+                        delta[l][i] = sum;
+                    }
+                }
+            }
+            //update weights
+            for (int l = 0; l < numLayers; l++)
+            {
+                for (int i = 0; i < (l == 0 ? inputSize : layerSize[l - 1]); i++)
+                {
+                    for (int j = 0; j < layerSize[l]; j++)
+                    {
+                        weightdelta = trainingRate * delta[l][j] * (l == 0 ? input[i] : layerOutput[l - 1][i]) + momentum * prevWeights[l][i][j];
+                        weights[l][i][j] -= weightdelta ;
+
+                        prevWeights[l][i][j] = weightdelta;
+                    }
+                }
+            }
+            //update biases
+            for (int l = 0; l < numLayers; l++)
+            {
+                for (int i = 0; i < layerSize[l]; i++)
+                {
+                    biasDelta = trainingRate * delta[l][i];
+                    bias[l][i] -= biasDelta + momentum * previousBiasDelta[l][i];
+
+                    previousBiasDelta[l][i] = biasDelta;
+                }
+            }
+            return error;
         }
 
-        public static double getRandomGaussian()
+        public static class Gaussian
         {
-            return getRandomGaussian(0.0, 1.0);
-        }
+            private static Random ran = new Random();
+            public static void getRandomGaussian(double mean, double stddev, out double val1, out double val2)
+            {
+                double u, s, v, t;
 
+                do
+                {
+                    u = 2 * ran.NextDouble() - 1;
+                    v = 2 * ran.NextDouble() - 1;
+
+                } while (u * u + v * v > 1 || u == 0 && v == 0);
+
+                s = u * u + v * v;
+                t = Math.Sqrt((-2.0 * Math.Log(s) / s));
+
+                val1 = stddev * u * t + mean;
+                val2 = stddev * v * t + mean;
+            }
+
+            public static double getRandomGaussian(double mean, double stddev)
+            {
+                double val1, val2;
+                getRandomGaussian(mean, stddev, out val1, out val2);
+
+                return val1;
+            }
+
+            public static double getRandomGaussian()
+            {
+                return getRandomGaussian(0.0, 1.0);
+            }
+
+        }
     }
 }

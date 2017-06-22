@@ -31,6 +31,23 @@ namespace Compression_Year_Project
                                                                 ActivationFunction.Sigmoid,
                                                                 ActivationFunction.Sigmoid };
             BackPropNetwork bp = new BackPropNetwork(ls,af);
+
+            double[] input = new double[1] { 0.0};
+            double[] desired = new double[1] { 0.1 };
+            double[] output = new double[1];
+
+            double error = 0.0;
+
+            for(int i = 0; i < 1000; i++)
+            {
+                error = bp.train(ref input, ref desired, 0.15, 0.1);
+                bp.run(ref input, out output);
+
+                if (i % 100 == 0)
+                {
+                    txtMain.Text += "Iteration " + i + ":\n\tInput " + Math.Round(input[0],3) + " Output " + Math.Round(output[0],3) + " Error " + Math.Round(error,3) + '\n';
+                }
+            }
         }
 
         private void OpenFile_Click(object sender, RoutedEventArgs e)
