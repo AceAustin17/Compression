@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace ANeuralNetwork
 {
@@ -10,7 +11,10 @@ namespace ANeuralNetwork
     {
         None,
         Sigmoid,
-        HyperTan
+        HyperTan,
+        Linear,
+        Gaussian,
+        RationalSig
     }
 
     static class ActivationFunctions
@@ -23,6 +27,12 @@ namespace ANeuralNetwork
                     return hyperTan(x);
                 case ActivationFunction.Sigmoid:
                     return sigmoid(x);
+                case ActivationFunction.Linear:
+                    return linear(x);
+                case ActivationFunction.Gaussian:
+                    return gaussian(x);
+                case ActivationFunction.RationalSig:
+                    return rationalSig(x);
                 case ActivationFunction.None:
                 default:
                     return 0;
@@ -34,9 +44,15 @@ namespace ANeuralNetwork
             switch (aFun)
             {
                 case ActivationFunction.HyperTan:
-                    return hyperTan(x);
+                    return hyperTanDeriv(x);
                 case ActivationFunction.Sigmoid:
                     return sigmoidDeriv(x);
+                case ActivationFunction.Linear:
+                    return linearDeriv(x);
+                case ActivationFunction.Gaussian:
+                    return gaussianderiv(x);
+                case ActivationFunction.RationalSig:
+                    return rationalsigDeriv(x);
                 case ActivationFunction.None:
                 default:
                     return 0;
@@ -63,9 +79,38 @@ namespace ANeuralNetwork
             return 1.0 / Math.Pow(Math.Cosh(x), 2);
         }
 
+        private static double linear( double x)
+        {
+            return x;
+        }
+        private static double linearDeriv(double x)
+        {
+            return 1.0;
+        }
+
+        private static double gaussian(double x)
+        {
+            return Math.Exp(-Math.Pow(x, 2));
+        }
+        private static double gaussianderiv(double x)
+        {
+            return -2.0 * x * gaussian(x);
+        }
+
+        private static double rationalSig (double x)
+        {
+            return x / (1.0 + Math.Sqrt(1.0 + x * x));
+        }
+        private static double rationalsigDeriv(double x)
+        {
+            double a = Math.Sqrt(1.0 + x * x);
+            return 1.0 / (a * (1 + a));
+        }
     }
     public class BackPropNetwork
     {
+        public string name = "default";
+
         private int numLayers;
         private int inputSize;
         private int[] layerSize;
@@ -273,6 +318,77 @@ namespace ANeuralNetwork
             return error;
         }
 
+        public void Save(string filePath)
+        {
+            if(filePath == null)
+            {
+                return;
+            }
+            XmlWriter xw =  XmlWriter.Create(filePath);
+
+            xw.WriteStartElement("ANeuralNetwork");
+            xw.WriteAttributeString("Type", "BackPropagation");
+
+            xw.WriteStartElement("Parameters");
+
+            xw.WriteElementString("Name", name);
+            xw.WriteElementString("InputSize", inputSize.ToString());
+            xw.WriteElementString("NumLayers", numLayers.ToString());
+
+            xw.WriteStartElement("Layers");
+
+            for(int l =0; l < numLayers; l++)
+            {
+                xw.WriteStartElement("Layer");
+                xw.WriteAttributeString("Index", l.ToString());
+
+                xw.WriteAttributeString("Size", layerSize[l].ToString());
+                xw.WriteAttributeString("Type", activFunctions[l].ToString());
+                xw.WriteEndElement();
+            }
+
+            xw.WriteEndElement(); // parameters
+
+            //weights and bias
+
+            xw.WriteStartElement("Weights");
+
+            for(int l = 0; l < numLayers; l++)
+            {
+                xw.WriteStartElement("Layer");
+                xw.WriteAttributeString("Index", l.ToString());
+
+                for(int j = 0; j < layerSize[l];j++)
+                {
+                    xw.WriteStartElement("Node");
+                    xw.WriteAttributeString("Index", j.ToString());
+
+                    xw.WriteAttributeString("Bias",bias[l][j].ToString());
+
+                    for(int i = 0; i < (l == 0 ? inputSize : layerSize[l - 1]); i++)
+                    {
+                        xw.WriteStartElement("Axon");
+                        xw.WriteAttributeString("Index", i.ToString());
+
+                        xw.WriteString(weights[l][i][j].ToString());
+
+                        xw.WriteEndElement();
+                    }
+
+                    xw.WriteEndElement();
+                }
+
+                xw.WriteEndElement();
+            }
+
+            xw.WriteEndElement();
+
+            xw.WriteEndElement();
+            xw.WriteEndElement();
+
+            xw.Flush();
+            xw.Close();
+        }
         public static class Gaussian
         {
             private static Random ran = new Random();

@@ -28,12 +28,12 @@ namespace Compression_Year_Project
             InitializeComponent();
             int[] ls = new int[3] { 1, 2, 1 };
             ActivationFunction[] af = new ActivationFunction[3] { ActivationFunction.None,
-                                                                ActivationFunction.Sigmoid,
-                                                                ActivationFunction.Sigmoid };
+                                                                ActivationFunction.RationalSig,
+                                                                ActivationFunction.Linear };
             BackPropNetwork bp = new BackPropNetwork(ls,af);
 
-            double[] input = new double[1] { 0.0};
-            double[] desired = new double[1] { 0.1 };
+            double[] input = new double[1] { 1.0};
+            double[] desired = new double[1] { 2.5 };
             double[] output = new double[1];
 
             double error = 0.0;
@@ -48,6 +48,8 @@ namespace Compression_Year_Project
                     txtMain.Text += "Iteration " + i + ":\n\tInput " + Math.Round(input[0],3) + " Output " + Math.Round(output[0],3) + " Error " + Math.Round(error,3) + '\n';
                 }
             }
+
+            bp.Save("../Ann.xml");
         }
 
         private void OpenFile_Click(object sender, RoutedEventArgs e)
