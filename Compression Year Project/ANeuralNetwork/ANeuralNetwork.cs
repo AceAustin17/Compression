@@ -125,7 +125,9 @@ namespace ANeuralNetwork
         private double[][][] weights;
         private double[][][] prevWeights;
 
-
+        private XmlDocument xdoc = null;
+        private bool loaded = true;
+        
         public BackPropNetwork(int[] layerSizes, ActivationFunction[] aFunctions)
         {
             if (aFunctions.Length != layerSizes.Length || aFunctions[0] != ActivationFunction.None)
@@ -203,6 +205,16 @@ namespace ANeuralNetwork
             }
         }
 
+        //another constructor
+
+        public BackPropNetwork(string filepath)
+        {
+            loaded = false;
+
+            Load(filepath);
+
+            loaded = true;
+        }
         //Methods
         public void run(ref double[] input, out double[] output)
         {
@@ -347,6 +359,7 @@ namespace ANeuralNetwork
                 xw.WriteEndElement();
             }
 
+            xw.WriteEndElement();
             xw.WriteEndElement(); // parameters
 
             //weights and bias
@@ -372,22 +385,133 @@ namespace ANeuralNetwork
 
                         xw.WriteString(weights[l][i][j].ToString());
 
-                        xw.WriteEndElement();
+                        xw.WriteEndElement();//ax
                     }
 
-                    xw.WriteEndElement();
+                    xw.WriteEndElement();//nod
                 }
 
-                xw.WriteEndElement();
+                xw.WriteEndElement();//layer
             }
 
-            xw.WriteEndElement();
-
-            xw.WriteEndElement();
+            xw.WriteEndElement();//weights
+            
             xw.WriteEndElement();
 
             xw.Flush();
             xw.Close();
+        }
+
+        public void Load(string filepath)
+        {
+            if(filepath == null)
+            {
+                return;
+            }
+
+            xdoc = new XmlDocument();
+            xdoc.Load(filepath);
+
+            string basePath = "";
+            string nodePath = "";
+            double val;
+
+            if (xPathVal("ANeuralNetwork/@Type") != "BackPropagation")
+            {
+                return;
+            }
+
+            basePath = "ANeuralNetwork/Parameters/";
+            name = xPathVal(basePath +"Name");
+
+            int.TryParse(xPathVal(basePath + "InputSize"),out inputSize);
+
+            int.TryParse(xPathVal(basePath + "NumLayers"), out numLayers);
+
+            layerSize = new int[numLayers];
+
+            activFunctions = new ActivationFunction[numLayers];
+
+            basePath = "ANeuralNetwork/Parameters/Layers/Layer";
+            for (int l =0; l < numLayers; l++)
+            {
+                int.TryParse(xPathVal(basePath + "[@Index='" + l.ToString() + "']/@Size"), out layerSize[l]);
+                Enum.TryParse<ActivationFunction>(xPathVal(basePath + "[@Index='" + l.ToString() + "']/@Type"), out activFunctions[l]);
+            }
+
+            //parse weights
+
+            bias = new double[numLayers][];
+            delta = new double[numLayers][];
+            previousBiasDelta = new double[numLayers][];
+
+            layerOutput = new double[numLayers][];
+            inputLayer = new double[numLayers][];
+
+            weights = new double[numLayers][][];
+            prevWeights = new double[numLayers][][];
+
+            for (int l = 0; l < numLayers; l++)
+            {
+                bias[l] = new double[layerSize[l]];
+                previousBiasDelta[l] = new double[layerSize[l]];
+                delta[l] = new double[layerSize[l]];
+                layerOutput[l] = new double[layerSize[l]];
+                inputLayer[l] = new double[layerSize[l]];
+
+                weights[l] = new double[l == 0 ? inputSize : layerSize[l - 1]][];
+                prevWeights[l] = new double[l == 0 ? inputSize : layerSize[l - 1]][];
+
+                for (int i = 0; i < (l == 0 ? inputSize : layerSize[l - 1]); i++)
+                {
+                    weights[l][i] = new double[layerSize[l]];
+                    prevWeights[l][i] = new double[layerSize[l]];
+                }
+            }
+            //initialise weights
+
+            for (int l = 0; l < numLayers; l++)
+            {
+                basePath = "ANeuralNetwork/Weights/Layer[@Index='" + l.ToString() + "']/";
+                for (int j = 0; j < layerSize[l]; j++)
+                {
+                    nodePath = "Node[@Index='" + j.ToString() + "']/@Bias";
+                    double.TryParse(xPathVal(basePath + nodePath), out val);
+
+                    bias[l][j] = val;
+                    previousBiasDelta[l][j] = 0.0;
+
+                    layerOutput[l][j] = 0.0;
+                    inputLayer[l][j] = 0.0;
+                }
+                for (int i = 0; i < (l == 0 ? inputSize : layerSize[l - 1]); i++)
+                {
+                    for (int j = 0; j < layerSize[l]; j++)
+                    {
+                        nodePath = "Node[@Index='" + j.ToString() + "']/Axon[@Index='" + i.ToString() + "']";
+
+                        double.TryParse(xPathVal(basePath + nodePath), out val);
+
+                        weights[l][i][j] = val;
+                        prevWeights[l][i][j] = 0.0;
+                    }
+                }
+
+
+            }
+            xdoc = null;
+        }
+
+        private string xPathVal(string xpath)
+        {
+            XmlNode node = xdoc.SelectSingleNode(xpath);
+
+            if(node == null)
+            {
+                throw new ArgumentException("Cannot find node", xpath);
+            }
+
+            return node.InnerText;
         }
         public static class Gaussian
         {

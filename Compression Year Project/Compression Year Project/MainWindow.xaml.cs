@@ -45,11 +45,19 @@ namespace Compression_Year_Project
 
                 if (i % 100 == 0)
                 {
-                    txtMain.Text += "Iteration " + i + ":\n\tInput " + Math.Round(input[0],3) + " Output " + Math.Round(output[0],3) + " Error " + Math.Round(error,3) + '\n';
+                 txtMain.Text += "Iteration " + i + ":\n\tInput " + Math.Round(input[0],3) + " Output " + Math.Round(output[0],3) + " Error " + Math.Round(error,3) + '\n';
                 }
             }
 
-            bp.Save("../Ann.xml");
+           bp.Save("../Ann.xml");
+
+            BackPropNetwork bp2 = new BackPropNetwork("../Ann.xml");
+
+            bp2.run(ref input, out output);
+
+            txtMain.Text += "Input " + Math.Round(input[0], 3) + " Output " + Math.Round(output[0], 3);
+
+
         }
 
         private void OpenFile_Click(object sender, RoutedEventArgs e)
