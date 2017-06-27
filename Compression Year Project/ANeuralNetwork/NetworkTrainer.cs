@@ -129,6 +129,14 @@ namespace ANeuralNetwork
                 data.Add(dp);
             }
         }
+
+        public int Size
+        {
+            get
+            {
+               return  data.Count;
+            }
+        }
     }
 
     public class Permutator
@@ -146,7 +154,7 @@ namespace ANeuralNetwork
         private int[] indices;
         private Random ran = new Random();
 
-        private void permute(int times)
+        public void permute(int times)
         {
             int i, j, t;
             for(int n= 0;n < times;n++)
@@ -170,7 +178,86 @@ namespace ANeuralNetwork
                 return indices[i];
             }
         }
+    }
+
+    public class NetworkTrainer
+    {
+        private Permutator idx;
+        private int iterations;
+        private double error;
+
+        public double maxError = 0.1, maxiterations = 1000, traininrate = 0.1 , momentum = 0.5;
+
+        public int nudgewindow = 500;
+        public double nudscale = 0.25, nudtolerance = 0.0001;
+
+        public BackPropNetwork bpnetwork;
+        public DataSet dataset;
+
+        private List<double> errorhistory;
+
+        public NetworkTrainer( BackPropNetwork BPN, DataSet ds)
+        {
+            bpnetwork = BPN;
+            dataset = ds;
+            idx = new Permutator(dataset.Size);
+            iterations = 0;
+
+            errorhistory = new List<double>();
+        }
+
+        public void trainDataSet()
+        {
+            do
+            {
+                iterations++;
+                error = 0.0;
+                idx.permute(dataset.Size);
+
+                for(int i = 0; i < dataset.Size; i++)
+                {
+                    error += bpnetwork.train(ref dataset.data[idx[i]].input, ref dataset.data[idx[i]].output, traininrate, momentum);
+
+                }
+
+                errorhistory.Add(error);
+
+                if( iterations % nudgewindow == 0)
+                {
+                  CheckNudge();
+                }
+            } while (error > maxError && iterations < maxiterations);
+
+        }
+
+        public double[] geteHistory()
+        {
+            return errorhistory.ToArray();
+        }
+
+        private void CheckNudge()
+        {
+            double oldAvg = 0f, newAvg=0f ;
+            int errLen = errorhistory.Count;
+
+            if (iterations < 2 * nudgewindow)
+            {
+                return;
             }
 
+            for(int i =0; i < nudgewindow; i++)
+            {
+                oldAvg += errorhistory[errLen - 2 * nudgewindow + i];
+                newAvg += errorhistory[errLen - nudgewindow + i];
+            }
 
+            oldAvg /= nudgewindow;
+            newAvg /= nudgewindow;
+
+            if(((double)Math.Abs(newAvg - oldAvg)) / nudgewindow < nudtolerance)
+            {
+                bpnetwork.Nudge(nudscale);
+            }
+        }
+    }
 }

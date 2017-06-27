@@ -35,7 +35,7 @@ namespace ANeuralNetwork
                     return rationalSig(x);
                 case ActivationFunction.None:
                 default:
-                    return 0;
+                    return 0.0;
             }
 
         }
@@ -55,7 +55,7 @@ namespace ANeuralNetwork
                     return rationalsigDeriv(x);
                 case ActivationFunction.None:
                 default:
-                    return 0;
+                    return 0.0;
             }
 
         }
@@ -188,9 +188,9 @@ namespace ANeuralNetwork
                 {
                     bias[l][j] = Gaussian.getRandomGaussian();
                     previousBiasDelta[l][j] = 0.0;
-
                     layerOutput[l][j] = 0.0;
                     inputLayer[l][j] = 0.0;
+                    delta[l][j] = 0.0;
                 }
                 for (int i = 0; i < (l == 0 ? inputSize : layerSize[l - 1]); i++)
                 {
@@ -234,13 +234,15 @@ namespace ANeuralNetwork
                     for (int i = 0; i < (l == 0 ? inputSize : layerSize[l - 1]); i++)
                     {
                         sum += weights[l][i][j] * (l == 0 ? input[i] : layerOutput[l - 1][i]);
-                        sum += bias[l][j];
-
-                        inputLayer[l][j] = sum;
-
-                        layerOutput[l][j] = ActivationFunctions.Evaluate(activFunctions[l], sum);
 
                     }
+                    sum += bias[l][j];
+
+                    inputLayer[l][j] = sum;
+
+                    layerOutput[l][j] = ActivationFunctions.Evaluate(activFunctions[l], sum);
+
+                    
                 }
             }
 
@@ -260,7 +262,7 @@ namespace ANeuralNetwork
 
             if (desired.Length != layerSize[numLayers - 1])
             {
-                throw new ArgumentException("Inalid parameter", "desired");
+                throw new ArgumentException("Invalid parameter", "desired");
 
             }
             double error = 0.0;
@@ -512,6 +514,32 @@ namespace ANeuralNetwork
             }
 
             return node.InnerText;
+        }
+
+        public void Nudge(double scalar)
+        {
+              // helps stop network getting stuck
+              for(int l=0; l < numLayers; l++)
+            {
+                for (int j =0; j < layerSize[l]; j++)
+                {
+                    //nudging weights
+                    for(int i = 0; i < (l==0 ? inputSize : layerSize[l-1]);i++)
+                    {
+                        double w = weights[l][i][j];
+                        double u = Gaussian.getRandomGaussian(0f, w * scalar);
+                        weights[l][i][j] += u;
+                        prevWeights[l][i][j] = 0f;
+
+                    }
+
+                    //nudging bias
+                    double b = bias[l][j];
+                    double v = Gaussian.getRandomGaussian(0f, b * scalar);
+                    bias[l][j] += v;
+                    previousBiasDelta[l][j] = 0f;
+                }
+            }
         }
         public static class Gaussian
         {

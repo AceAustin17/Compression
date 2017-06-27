@@ -16,7 +16,7 @@ using System.IO;
 using Microsoft.Win32;
 using ANeuralNetwork;
 using System.Xml;
-
+using System.IO;
 namespace Compression_Year_Project
 {
     /// <summary>
@@ -27,6 +27,43 @@ namespace Compression_Year_Project
         public MainWindow()
         {
             InitializeComponent();
+
+            XmlDocument xdoc = new XmlDocument();
+            xdoc.Load("../test.xml");
+
+            //network to train
+
+            DataSet ds = new DataSet();
+
+            ds.Load((XmlElement)xdoc.DocumentElement.ChildNodes[0]);
+
+            int[] layersizes = new int[3] { 2, 2, 1 };
+            ActivationFunction[] activFunctions = new ActivationFunction[3]{ ActivationFunction.None, ActivationFunction.Sigmoid,
+                ActivationFunction.Sigmoid };
+
+            BackPropNetwork bpnetwork = new BackPropNetwork(layersizes, activFunctions);
+
+            //network trainer
+            NetworkTrainer nt = new NetworkTrainer(bpnetwork, ds);
+
+            nt.maxError = 0.001;
+            nt.maxiterations = 1000000;
+
+            nt.trainDataSet();
+
+            nt.bpnetwork.Save("../Check.xml");
+
+            //save error
+            double[] err = nt.geteHistory();
+            string[] filedata = new string[err.Length];
+
+            for (int i = 0; i <err.Length; i++)
+            {
+                filedata[i] = i.ToString() + " " + err[i].ToString();
+            }
+
+            File.WriteAllLines("../xornetwrk.txt",filedata);
+
            
         }
 
