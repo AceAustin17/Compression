@@ -39,7 +39,7 @@ namespace Compression_Year_Project
 
             int[] layersizes = new int[3] { 2, 2, 1 };
             ActivationFunction[] activFunctions = new ActivationFunction[3]{ ActivationFunction.None, ActivationFunction.Sigmoid,
-                ActivationFunction.Sigmoid };
+                ActivationFunction.Linear };
 
             BackPropNetwork bpnetwork = new BackPropNetwork(layersizes, activFunctions);
 
@@ -49,7 +49,7 @@ namespace Compression_Year_Project
             nt.maxError = 0.001;
             nt.maxiterations = 1000000;
 
-            nt.trainDataSet();
+            nt.TrainDataset();
 
             nt.bpnetwork.Save("../Check.xml");
 
@@ -62,9 +62,7 @@ namespace Compression_Year_Project
                 filedata[i] = i.ToString() + " " + err[i].ToString();
             }
 
-            File.WriteAllLines("../xornetwrk.txt",filedata);
-
-           
+            File.WriteAllLines("../xornetwrk.txt",filedata);           
         }
 
         private void OpenFile_Click(object sender, RoutedEventArgs e)

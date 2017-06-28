@@ -17,6 +17,8 @@ namespace ANeuralNetwork
         public double[] input;
         public double[] output;
 
+        public int inputSize { get { return input.Length; } }
+        public int outputSize { get { return output.Length; } }   
         public void Load(double[] input, double[] output)
         {
             this.input = new double[input.Length];
@@ -180,7 +182,7 @@ namespace ANeuralNetwork
         }
     }
 
-    public class NetworkTrainer
+    public class SimpNetworkTrainer
     {
         private Permutator idx;
         private int iterations;
@@ -196,7 +198,7 @@ namespace ANeuralNetwork
 
         private List<double> errorhistory;
 
-        public NetworkTrainer( BackPropNetwork BPN, DataSet ds)
+        public SimpNetworkTrainer( BackPropNetwork BPN, DataSet ds)
         {
             bpnetwork = BPN;
             dataset = ds;
@@ -255,6 +257,192 @@ namespace ANeuralNetwork
             newAvg /= nudgewindow;
 
             if(((double)Math.Abs(newAvg - oldAvg)) / nudgewindow < nudtolerance)
+            {
+                bpnetwork.Nudge(nudscale);
+            }
+        }
+    }
+
+    public class NetworkTrainer
+    {
+        private Permutator idx;
+        private int iterations;
+        private double error;
+
+        public double maxError = 0.1, maxiterations = 1000, traininrate = 0.1, momentum = 0.5;
+
+        public bool nudge = true;
+        public int nudgewindow = 500;
+        public double nudscale = 0.25, nudtolerance = 0.0001;
+
+        public BackPropNetwork bpnetwork;
+        public DataSet dataset;
+
+        private List<double> errorhistory;
+
+        public NetworkTrainer(BackPropNetwork BPN, DataSet ds)
+        {
+            bpnetwork = BPN;
+            dataset = ds;
+            init();
+        }
+
+        public void init()
+        {
+           
+            iterations = 0;
+            if(idx == null)
+            {
+                idx = new Permutator(dataset.Size);
+            }
+            else
+            {
+                idx.permute(dataset.Size);
+            }
+            if (errorhistory == null)
+            {
+                errorhistory = new List<double>();
+            }
+            else
+            {
+                errorhistory.Clear();
+            }
+        }
+
+        public bool TrainDataset()
+        {
+            bool success = true;
+
+            if (success)
+            {
+                success = _beforetraindataset();
+            }
+            if (success)
+            {
+                success = _trainDatasetAction();
+            }
+            if (success)
+            {
+                success = _Aftertraindataset();
+            }
+
+            return success;
+        }
+
+        protected virtual bool beforetraindataset() { return true; }
+        protected virtual bool Aftertraindataset() { return true; }
+        protected virtual bool beforetrainEpoch() { return true; }
+        protected virtual bool AftertrainEpoch() { return true; }
+
+        protected virtual bool BeforetrainDatapoint(ref double[] Input, ref double[] Output) { return true; }
+
+        protected virtual bool AftertrainDatapoint(ref double[] Input, ref double[] Output) { return true; }
+
+        private bool _beforetraindataset()
+        {
+            init();
+            return beforetraindataset();
+        }
+        private bool _trainDatasetAction()
+        {
+            bool success = true;
+            do
+            {
+             
+                if(success)
+                {
+                    success = _BeforetrainEpoch();
+                }
+                if(success)
+                {
+                    success = _TrainepochAction();
+                }
+                if(success)
+                {
+                    success = _AfterTrainepoch();
+                }
+            } while (error > maxError && iterations < maxiterations && success);
+
+
+            return success;
+        }
+        private bool _Aftertraindataset()
+        {
+            return Aftertraindataset();
+        }
+
+        private bool _BeforetrainEpoch()
+        {
+            iterations++;
+            error = 0.0;
+            idx.permute(dataset.Size);
+            return beforetrainEpoch();
+        }
+
+        private bool _TrainepochAction()
+        {
+
+            bool success = true;
+            for (int i = 0; i < dataset.Size && success; i++)
+            {
+
+                double[] input = new double[dataset.data[idx[i]].inputSize];
+                double[] output = new double[dataset.data[idx[i]].outputSize];
+
+                Array.Copy(dataset.data[idx[i]].input, input, input.Length);
+                Array.Copy(dataset.data[idx[i]].output, output, output.Length);
+
+                if (success)
+                {
+                 success = BeforetrainDatapoint(ref input, ref output);
+                }
+
+                error += bpnetwork.train(ref input, ref output, traininrate, momentum);
+
+                if (success)
+                {
+                    AftertrainDatapoint(ref input, ref output);
+                }
+
+            }
+            return success;
+        }
+
+        private bool _AfterTrainepoch()
+        {
+            errorhistory.Add(error);
+
+            if (iterations % nudgewindow == 0 && nudge)
+            {
+                CheckNudge();
+            }
+            return AftertrainEpoch();
+        }
+        public double[] geteHistory()
+        {
+            return errorhistory.ToArray();
+        }
+
+        private void CheckNudge()
+        {
+            double oldAvg = 0f, newAvg = 0f;
+            int errLen = errorhistory.Count;
+
+            if (iterations < 2 * nudgewindow)
+            {
+                return;
+            }
+
+            for (int i = 0; i < nudgewindow; i++)
+            {
+                oldAvg += errorhistory[errLen - 2 * nudgewindow + i];
+                newAvg += errorhistory[errLen - nudgewindow + i];
+            }
+
+            oldAvg /= nudgewindow;
+            newAvg /= nudgewindow;
+
+            if (((double)Math.Abs(newAvg - oldAvg)) / nudgewindow < nudtolerance)
             {
                 bpnetwork.Nudge(nudscale);
             }
