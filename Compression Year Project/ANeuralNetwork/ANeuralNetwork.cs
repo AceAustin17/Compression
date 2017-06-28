@@ -296,7 +296,7 @@ namespace ANeuralNetwork
                         sum = 0.0;
                         for (int j = 0; j < layerSize[l + 1]; j++)
                         {
-                            sum += weights[l + 1][i][j] + delta[l + 1][j];
+                            sum += weights[l + 1][i][j] * delta[l + 1][j];
                         }
                         sum *= ActivationFunctions.EvaluateDerivative(activFunctions[l], inputLayer[l][i]);
 

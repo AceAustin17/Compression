@@ -16,7 +16,6 @@ using System.IO;
 using Microsoft.Win32;
 using ANeuralNetwork;
 using System.Xml;
-using System.IO;
 namespace Compression_Year_Project
 {
     /// <summary>
