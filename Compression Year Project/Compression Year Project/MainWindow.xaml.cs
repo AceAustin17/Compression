@@ -73,11 +73,14 @@ namespace Compression_Year_Project
                 txtMain.Text += "The file loaded is "+System.IO.Path.GetFileName(opf.FileName) + "\n";
                 Normalise norma = new Normalise(opf.FileName);
 
-                foreach(string tok in norma._linedata)
-                {
-                    txtMain.Text += tok + "\n";
-                }
-                
+                //for(int i = 0; i < norma._worddata.Length;i++)
+                //{
+                //    txtMain.Text += i + ") word: " + norma._worddata[i] + "   value: " + norma._inputData[i] +'\n';
+                //}
+                norma.saveToXML();
+                txtMain.Text += "file saved";
+
+
             }
         }
 

@@ -1,9 +1,11 @@
-﻿using System;
+﻿using ANeuralNetwork;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Compression_Year_Project
 {
@@ -12,6 +14,9 @@ namespace Compression_Year_Project
         private string[] linedata;
         private string[] worddata;
         private double[] inputData;
+        private double[] outputData;
+        private Random random = new Random();
+        private List<KeyValuePair<string, double>> map = new List<KeyValuePair<string, double>>();
         public Normalise(string filePath)
         {
             using (StreamReader sr = new StreamReader(filePath))
@@ -24,36 +29,104 @@ namespace Compression_Year_Project
                     worddata = line.Split(delimiterChars);
                 }
             }
-
-        }
-
-        private void saveToXML()
-        {
-
-        }
-        private void popArray(string[] wordata)
-        {
-            inputData = new double[worddata.Length];
-            List<double> randomList = new List<double>();
-
-            for(int i = 0; i < worddata.Length;i++)
+            popArray(worddata);
+            outputData = new double[inputData.Length];
+            for(int i = 0; i< outputData.Length;i++)
             {
-                if (worddata[i].Equals(" "))
+                if(i == outputData.Length - 1)
+                {
+                    outputData[i] = 0.0;
+                }
+                else
+                {
+                    outputData[i] = inputData[i + 1];
+                }
+                
+            }
+        }
+
+        public void saveToXML()
+        {
+            DataPoint[] d = new DataPoint[inputData.Length];
+            DataSet DS = new DataSet();
+            double[] tmpInput = new double[1];
+            double[] tmpOutput = new double[1];
+
+            for (int i = 0; i < outputData.Length; i++)
+            {
+                tmpInput[0] = inputData[i];
+                tmpOutput[0] = outputData[i];
+                d[i] = new DataPoint(tmpInput, tmpOutput);
+                DS.data.Add(d[i]);
+            }
+
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml("<Root/>");
+
+            doc.DocumentElement.AppendChild(DS.toXml(doc));
+
+            doc.Save("./ann.xml");
+        }
+        private void popArray(string[] worData)
+        {
+            inputData = new double[worData.Length];
+            List<double> randomlist = new List<double>();
+            for(int i = 0; i < worData.Length;i++)
+              {
+                if (String.IsNullOrWhiteSpace(worData[i]))
                 {
                     inputData[i] = 0.0;
                 }
                 else
                 {
+                    if (this.map.Any())
+                    {
+                        bool check = true;
+                        foreach (KeyValuePair<string, double> kv in this.map)
+                        {
+                                if (worData[i].CompareTo(kv.Key) == 0)
+                                {
+                                    inputData[i] = kv.Value;
+                                    check = false;
+                                    break;
+                                }                         
+                        }
+                        if (check)
+                        {
+                            double tmp = Math.Round(GetRandomNumber(0.1, 0.9), 5);
+                            while (randomlist.Contains(tmp))
+                            {
+                                tmp = Math.Round(GetRandomNumber(0.1, 0.9), 5);
+                            }
+                            inputData[i] = tmp;
+                            KeyValuePair<string, double> tmpKV = new KeyValuePair<string, double>(worData[i], inputData[i]);
 
+                            map.Add(tmpKV);
+                        }
+                    }
+                    else
+                    {
+                        double tmp = Math.Round(GetRandomNumber(0.1, 0.9), 5);                      
+                        inputData[i] = tmp;
+                        KeyValuePair<string, double> tmpKV = new KeyValuePair<string, double>(worData[i], inputData[i]);
+                        map.Add(tmpKV);
+                    }
                 }
             }
-        }
-        private double GetRandomNumber(double minimum, double maximum)
+    }
+    private double GetRandomNumber(double minimum, double maximum)
         {
-            Random random = new Random();
+            
             return random.NextDouble() * (maximum - minimum) + minimum;
         }
 
+        public List<KeyValuePair<string,double>> _map
+        {
+            get
+            {
+                return this.map;                  
+            }
+        }
         public double[] _inputData
         {
             get
