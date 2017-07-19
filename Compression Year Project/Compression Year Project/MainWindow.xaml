@@ -25,10 +25,11 @@
             <Button Content="Compress" Width="212" Height="56"/>
             <Button Content="Extract" Canvas.Left="212" Width="189" Height="56"/>
             <Button Content="Show Results" Canvas.Left="401" Width="185" Height="56"/>
-            <ScrollViewer >
-                <TextBlock FontSize="14" x:Name="txtMain"  TextWrapping="Wrap" Canvas.Top="56" Height="320" Width="584" Canvas.Left="10" />
+            <ScrollViewer Name="scroll"
+              VerticalScrollBarVisibility="Visible" 
+              Canvas.Top="56" Height="269" Width="585" Canvas.Left="1">
+            <TextBlock FontSize="14" x:Name="txtMain" Padding="0,0,1000,0"/>
             </ScrollViewer>
-
             <Button  Style="{StaticResource MaterialDesignFloatingActionButton}" Canvas.Left="502" Canvas.Top="252" Width="54" Height="54" FontSize="36" Click="OpenFile_Click">
                 <materialDesign:PackIcon Kind="Plus" Height="28" Width="28" />
             </Button>

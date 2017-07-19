@@ -26,42 +26,42 @@ namespace Compression_Year_Project
         public MainWindow()
         {
             InitializeComponent();
+       
+            //XmlDocument xdoc = new XmlDocument();
+            //xdoc.Load("../test.xml");
 
-            XmlDocument xdoc = new XmlDocument();
-            xdoc.Load("../test.xml");
+            ////network to train
 
-            //network to train
+            //DataSet ds = new DataSet();
 
-            DataSet ds = new DataSet();
+            //ds.Load((XmlElement)xdoc.DocumentElement.ChildNodes[0]);
 
-            ds.Load((XmlElement)xdoc.DocumentElement.ChildNodes[0]);
+            //int[] layersizes = new int[3] { 2, 2, 1 };
+            //ActivationFunction[] activFunctions = new ActivationFunction[3]{ ActivationFunction.None, ActivationFunction.Sigmoid,
+            //    ActivationFunction.Linear };
 
-            int[] layersizes = new int[3] { 2, 2, 1 };
-            ActivationFunction[] activFunctions = new ActivationFunction[3]{ ActivationFunction.None, ActivationFunction.Sigmoid,
-                ActivationFunction.Linear };
+            //BackPropNetwork bpnetwork = new BackPropNetwork(layersizes, activFunctions);
 
-            BackPropNetwork bpnetwork = new BackPropNetwork(layersizes, activFunctions);
+            ////network trainer
+            //NetworkTrainer nt = new NetworkTrainer(bpnetwork, ds);
 
-            //network trainer
-            NetworkTrainer nt = new NetworkTrainer(bpnetwork, ds);
+            //nt.maxError = 0.001;
+            //nt.maxiterations = 1000000;
 
-            nt.maxError = 0.001;
-            nt.maxiterations = 1000000;
+            //nt.TrainDataset();
 
-            nt.TrainDataset();
+            //nt.bpnetwork.Save("../Check.xml");
 
-            nt.bpnetwork.Save("../Check.xml");
+            ////save error
+            //double[] err = nt.geteHistory();
+            //string[] filedata = new string[err.Length];
 
-            //save error
-            double[] err = nt.geteHistory();
-            string[] filedata = new string[err.Length];
+            //for (int i = 0; i <err.Length; i++)
+            //{
+            //    filedata[i] = i.ToString() + " " + err[i].ToString();
+            //}
 
-            for (int i = 0; i <err.Length; i++)
-            {
-                filedata[i] = i.ToString() + " " + err[i].ToString();
-            }
-
-            File.WriteAllLines("../xornetwrk.txt",filedata);           
+            //File.WriteAllLines("../xornetwrk.txt",filedata);           
         }
 
         private void OpenFile_Click(object sender, RoutedEventArgs e)
@@ -71,6 +71,13 @@ namespace Compression_Year_Project
             if(opf.ShowDialog() == true)
             {
                 txtMain.Text += "The file loaded is "+System.IO.Path.GetFileName(opf.FileName) + "\n";
+                Normalise norma = new Normalise(opf.FileName);
+
+                foreach(string tok in norma._linedata)
+                {
+                    txtMain.Text += tok + "\n";
+                }
+                
             }
         }
 
