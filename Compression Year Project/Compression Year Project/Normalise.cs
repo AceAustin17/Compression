@@ -13,6 +13,7 @@ namespace Compression_Year_Project
     {
         private string[] linedata;
         private string[] worddata;
+
         private double[] inputData;
         private double[] outputData;
         private Random random = new Random();
@@ -37,9 +38,13 @@ namespace Compression_Year_Project
                 {
                     outputData[i] = 0.0;
                 }
+                //else if (i == outputData.Length - 2)
+                //{
+                //    outputData[i] = 0.0;
+                //}
                 else
-                {
-                    outputData[i] = inputData[i + 1];
+                {                     
+                        outputData[i] = inputData[i + 1];
                 }
                 
             }
@@ -54,10 +59,26 @@ namespace Compression_Year_Project
 
             for (int i = 0; i < outputData.Length; i++)
             {
-                tmpInput[0] = inputData[i];
-                tmpOutput[0] = outputData[i];
-                d[i] = new DataPoint(tmpInput, tmpOutput);
-                DS.data.Add(d[i]);
+                //if(i== outputData.Length-1)
+                //{
+                //    tmpInput[0] = inputData[i];
+                //    tmpInput[1] = 0.0;
+                //    tmpOutput[0] = outputData[i];
+                //    d[i] = new DataPoint(tmpInput, tmpOutput);
+                //    DS.data.Add(d[i]);
+                //}
+                //else
+                //{
+                if (inputData[i] != 0.0 && outputData[i] !=0.0)
+                {
+                    tmpInput[0] = inputData[i];
+                    // tmpInput[1] = inputData[i + 1];
+                    tmpOutput[0] = outputData[i];
+                    d[i] = new DataPoint(tmpInput, tmpOutput);
+                    DS.data.Add(d[i]);
+                }
+               // }
+                
             }
 
             XmlDocument doc = new XmlDocument();
@@ -93,10 +114,10 @@ namespace Compression_Year_Project
                         }
                         if (check)
                         {
-                            double tmp = Math.Round(GetRandomNumber(0.1, 0.9), 5);
+                            double tmp = Math.Round(GetRandomNumber(0,1),3);
                             while (randomlist.Contains(tmp))
                             {
-                                tmp = Math.Round(GetRandomNumber(0.1, 0.9), 5);
+                                tmp = Math.Round(GetRandomNumber(0,1), 3);
                             }
                             inputData[i] = tmp;
                             KeyValuePair<string, double> tmpKV = new KeyValuePair<string, double>(worData[i], inputData[i]);
@@ -106,7 +127,7 @@ namespace Compression_Year_Project
                     }
                     else
                     {
-                        double tmp = Math.Round(GetRandomNumber(0.1, 0.9), 5);                      
+                        double tmp = Math.Round(GetRandomNumber(0,1),3);                      
                         inputData[i] = tmp;
                         KeyValuePair<string, double> tmpKV = new KeyValuePair<string, double>(worData[i], inputData[i]);
                         map.Add(tmpKV);
@@ -160,6 +181,17 @@ namespace Compression_Year_Project
                 this.linedata = value;
             }
          }
+        public double[] _outputdata
+        {
+            get
+            {
+                return this.outputData;
+            }
+            set
+            {
+                this.outputData = value;
+            }
+        }
 
     }
 }

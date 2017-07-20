@@ -78,7 +78,7 @@ namespace Compression_Year_Project
                 //    txtMain.Text += i + ") word: " + norma._worddata[i] + "   value: " + norma._inputData[i] +'\n';
                 //}
                 norma.saveToXML();
-                txtMain.Text += "file saved";
+                txtMain.Text += "file saved"+ '\n';
 
 
             }
@@ -133,5 +133,10 @@ namespace Compression_Year_Project
 
         }
 
+        private void Compress_Click(object sender, RoutedEventArgs e)
+        {
+            Compress cmp = new Compress();
+            txtMain.Text += "Done";
+        }
     }
 }

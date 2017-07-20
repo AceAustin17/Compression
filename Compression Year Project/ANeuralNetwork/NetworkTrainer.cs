@@ -272,7 +272,7 @@ namespace ANeuralNetwork
         public double maxError = 0.1, maxiterations = 1000, traininrate = 0.1, momentum = 0.5;
 
         public bool nudge = true;
-        public int nudgewindow = 500;
+        public int nudgewindow = 1000;
         public double nudscale = 0.25, nudtolerance = 0.0001;
 
         public BackPropNetwork bpnetwork;
