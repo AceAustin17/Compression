@@ -13,7 +13,6 @@ namespace Compression_Year_Project
     {
         private string[] linedata;
         private string[] worddata;
-
         private double[] inputData;
         private double[] outputData;
         private Random random = new Random();

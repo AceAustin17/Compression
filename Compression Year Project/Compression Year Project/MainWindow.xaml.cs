@@ -23,45 +23,11 @@ namespace Compression_Year_Project
     /// </summary>
     public partial class MainWindow : Window
     {
+        Normalise norma;
         public MainWindow()
         {
-            InitializeComponent();
-       
-            //XmlDocument xdoc = new XmlDocument();
-            //xdoc.Load("../test.xml");
-
-            ////network to train
-
-            //DataSet ds = new DataSet();
-
-            //ds.Load((XmlElement)xdoc.DocumentElement.ChildNodes[0]);
-
-            //int[] layersizes = new int[3] { 2, 2, 1 };
-            //ActivationFunction[] activFunctions = new ActivationFunction[3]{ ActivationFunction.None, ActivationFunction.Sigmoid,
-            //    ActivationFunction.Linear };
-
-            //BackPropNetwork bpnetwork = new BackPropNetwork(layersizes, activFunctions);
-
-            ////network trainer
-            //NetworkTrainer nt = new NetworkTrainer(bpnetwork, ds);
-
-            //nt.maxError = 0.001;
-            //nt.maxiterations = 1000000;
-
-            //nt.TrainDataset();
-
-            //nt.bpnetwork.Save("../Check.xml");
-
-            ////save error
-            //double[] err = nt.geteHistory();
-            //string[] filedata = new string[err.Length];
-
-            //for (int i = 0; i <err.Length; i++)
-            //{
-            //    filedata[i] = i.ToString() + " " + err[i].ToString();
-            //}
-
-            //File.WriteAllLines("../xornetwrk.txt",filedata);           
+            InitializeComponent();    
+           
         }
 
         private void OpenFile_Click(object sender, RoutedEventArgs e)
@@ -71,14 +37,13 @@ namespace Compression_Year_Project
             if(opf.ShowDialog() == true)
             {
                 txtMain.Text += "The file loaded is "+System.IO.Path.GetFileName(opf.FileName) + "\n";
-                Normalise norma = new Normalise(opf.FileName);
+                norma = new Normalise(opf.FileName);
 
                 //for(int i = 0; i < norma._worddata.Length;i++)
                 //{
                 //    txtMain.Text += i + ") word: " + norma._worddata[i] + "   value: " + norma._inputData[i] +'\n';
                 //}
                 norma.saveToXML();
-                txtMain.Text += "file saved"+ '\n';
 
 
             }
@@ -136,7 +101,24 @@ namespace Compression_Year_Project
         private void Compress_Click(object sender, RoutedEventArgs e)
         {
             Compress cmp = new Compress();
-            txtMain.Text += "Done";
+            txtMain.Text += "Netork Trained" + '\n';
+            cmp.compressFile(norma);
+
+            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+            dlg.FileName = "CompressedText"; //default file name
+            dlg.DefaultExt = ".cmx"; //default file extension
+            dlg.Filter = "Compressed Files (.cmx)|*.cmx"; //filter files by extension
+
+            // Show save file dialog box
+            Nullable<bool> result = dlg.ShowDialog();
+
+            // Process save file dialog box results
+            if (result == true)
+            {                
+                File.WriteAllText(dlg.FileName, cmp._compressedString);
+            }
+
+            txtMain.Text += "File saved" + '\n';
         }
     }
 }
