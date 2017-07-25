@@ -100,25 +100,39 @@ namespace Compression_Year_Project
 
         private void Compress_Click(object sender, RoutedEventArgs e)
         {
-            Compress cmp = new Compress();
-            txtMain.Text += "Netork Trained" + '\n';
-            cmp.compressFile(norma);
+            LoadingIndicator.IsBusy = true;
 
-            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
-            dlg.FileName = "CompressedText"; //default file name
-            dlg.DefaultExt = ".cmx"; //default file extension
-            dlg.Filter = "Compressed Files (.cmx)|*.cmx"; //filter files by extension
+            LoadingIndicator.BusyContent = "Compressing Data";
+            
+            Task.Factory.StartNew(() =>
+                 {
+                     Compress cmp = new Compress();
+                     return cmp;
+                 }
+             ).ContinueWith((task) =>{
 
-            // Show save file dialog box
-            Nullable<bool> result = dlg.ShowDialog();
+                 LoadingIndicator.IsBusy = false;
+                 task.Result.compressFile(norma);
 
-            // Process save file dialog box results
-            if (result == true)
-            {                
-                File.WriteAllText(dlg.FileName, cmp._compressedString);
-            }
+                 Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+                 dlg.FileName = "CompressedText"; //default file name
+                 dlg.DefaultExt = ".cmx"; //default file extension
+                 dlg.Filter = "Compressed Files (.cmx)|*.cmx"; //filter files by extension
 
-            txtMain.Text += "File saved" + '\n';
+                 // Show save file dialog box
+                 Nullable<bool> result = dlg.ShowDialog();
+                
+                 if (result == true)
+                 {
+                     File.WriteAllText(dlg.FileName, task.Result._compressedString);
+                 }
+
+                 txtMain.Text += "File saved" + '\n';
+             }, TaskScheduler.FromCurrentSynchronizationContext()
+
+            );
+            
+            
         }
     }
 }

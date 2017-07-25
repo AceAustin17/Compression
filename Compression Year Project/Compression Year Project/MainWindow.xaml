@@ -5,10 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Compression_Year_Project"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         Title="The Compression Project" Height="400" Width="600">
-
-    <DockPanel>
+    
+    
+        <DockPanel>
         <WrapPanel DockPanel.Dock="Top">
             <Menu>
                 <MenuItem Header="_File">
@@ -18,8 +20,11 @@
                 <MenuItem Header="_Help"></MenuItem>
             </Menu>
         </WrapPanel>
-
-        <Canvas Height="347" VerticalAlignment="Top" Width="587" AllowDrop="True" PreviewDrop="Canvas_PreviewDrop"
+        <xctk:BusyIndicator
+        x:Name="LoadingIndicator"
+        IsBusy="False"
+        >
+            <Canvas Height="347" VerticalAlignment="Top" Width="587" AllowDrop="True" PreviewDrop="Canvas_PreviewDrop"
                 PreviewDragOver="Canvas_PreviewDragOver"
                 PreviewDragEnter="Canvas_PreviewDragOver">
             <Button Content="Compress" Width="212" Height="56" Click="Compress_Click"/>
@@ -34,5 +39,7 @@
                 <materialDesign:PackIcon Kind="Plus" Height="28" Width="28" />
             </Button>
         </Canvas>
+
+        </xctk:BusyIndicator>
     </DockPanel>
 </Window>
