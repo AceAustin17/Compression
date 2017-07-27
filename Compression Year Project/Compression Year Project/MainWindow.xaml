@@ -28,7 +28,7 @@
                 PreviewDragOver="Canvas_PreviewDragOver"
                 PreviewDragEnter="Canvas_PreviewDragOver">
             <Button Content="Compress" Width="212" Height="56" Click="Compress_Click"/>
-            <Button Content="Extract" Canvas.Left="212" Width="189" Height="56"/>
+            <Button Content="Extract" Canvas.Left="212" Width="189" Height="56" Click="Extract_Click"/>
             <Button Content="Show Results" Canvas.Left="401" Width="185" Height="56"/>
             <ScrollViewer Name="scroll"
               VerticalScrollBarVisibility="Visible" 

@@ -38,14 +38,8 @@ namespace Compression_Year_Project
             {
                 txtMain.Text += "The file loaded is "+System.IO.Path.GetFileName(opf.FileName) + "\n";
                 norma = new Normalise(opf.FileName);
-
-                //for(int i = 0; i < norma._worddata.Length;i++)
-                //{
-                //    txtMain.Text += i + ") word: " + norma._worddata[i] + "   value: " + norma._inputData[i] +'\n';
-                //}
                 norma.saveToXML();
-
-
+                
             }
         }
 
@@ -121,10 +115,11 @@ namespace Compression_Year_Project
 
                  // Show save file dialog box
                  Nullable<bool> result = dlg.ShowDialog();
-                
+
+                 byte[] compressedfile = SmazSharp.Smaz.Compress(task.Result._compressedString);
                  if (result == true)
                  {
-                     File.WriteAllText(dlg.FileName, task.Result._compressedString);
+                     File.WriteAllBytes(dlg.FileName, compressedfile);
                  }
 
                  txtMain.Text += "File saved" + '\n';
@@ -133,6 +128,33 @@ namespace Compression_Year_Project
             );
             
             
+        }
+
+        private void Extract_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog opf = new OpenFileDialog();
+            opf.Filter = "Compressed FIles (*.cmx)|*.cmx";
+
+            if (opf.ShowDialog() == true)
+            {
+               txtMain.Text += "The file loaded is " + System.IO.Path.GetFileName(opf.FileName) + "\n";
+                        
+            
+            Extract ext = new Extract(File.ReadAllBytes(opf.FileName));
+
+            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+            dlg.FileName = "Original Text"; //default file name
+            dlg.DefaultExt = ".txt"; //default file extension
+            dlg.Filter = "Text File (*.txt)|*.txt"; //filter files by extension
+
+            // Show save file dialog box
+            Nullable<bool> result = dlg.ShowDialog();
+            
+            if (result == true)
+            {
+                File.WriteAllText(dlg.FileName, ext.extract());
+            }
+            }
         }
     }
 }
