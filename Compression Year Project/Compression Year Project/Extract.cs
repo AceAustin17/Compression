@@ -10,6 +10,7 @@ namespace Compression_Year_Project
     class Extract
     {
         private string fileContents;
+        private List<KeyValuePair<string, string>> indexList = new List<KeyValuePair<string, string>>();
 
         public Extract(byte[] firstinput)
         {
@@ -21,12 +22,32 @@ namespace Compression_Year_Project
             string pattern = @"(\[\w*, \w*])|(\[\w*\n\w*, \w*])";
 
            Match m = Regex.Match(fileContents, pattern);
-            string t = "";
+           string index = "";
            while(m.Success)
             {
                 Group g = m.Groups[0];
-                t += g.ToString();
+                index += g.ToString();
                 m = m.NextMatch();
+            }
+
+            char[] separatingChars = {']'};      
+
+           
+            index = index.Trim();
+            string[] pairs = index.Split(separatingChars,System.StringSplitOptions.RemoveEmptyEntries);
+
+            string t = "";
+            for(int i =0; i < pairs.Length; i++)
+            {
+               pairs[i] = pairs[i].Trim('[',']',' ');
+               string[] chk = pairs[i].Split(',');
+
+               indexList.Add(new KeyValuePair<string, string>(chk[0], chk[1]));
+               
+            }
+            foreach(KeyValuePair<string,string> kv in indexList)
+            {
+                t += kv.Key + " " + kv.Value + "\n\n";
             }
             return t;
         }
