@@ -136,9 +136,7 @@ namespace Compression_Year_Project
             opf.Filter = "Compressed FIles (*.cmx)|*.cmx";
 
             if (opf.ShowDialog() == true)
-            {
-               txtMain.Text += "The file loaded is " + System.IO.Path.GetFileName(opf.FileName) + "\n";
-                        
+            {                      
             
             Extract ext = new Extract(File.ReadAllBytes(opf.FileName));
 
@@ -150,10 +148,12 @@ namespace Compression_Year_Project
             // Show save file dialog box
             Nullable<bool> result = dlg.ShowDialog();
             
-            if (result == true)
-            {
-                File.WriteAllText(dlg.FileName, ext.extract());
-            }
+                if (result == true)
+                {
+                    File.WriteAllText(dlg.FileName, ext.extract());
+                }
+                txtMain.Text += "The file has been saved \n";
+
             }
         }
     }
