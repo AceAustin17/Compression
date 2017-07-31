@@ -24,6 +24,8 @@ namespace Compression_Year_Project
     public partial class MainWindow : Window
     {
         Normalise norma;
+        long compressedLength;
+        long orignaLength;
         public MainWindow()
         {
             InitializeComponent();    
@@ -39,7 +41,8 @@ namespace Compression_Year_Project
                 txtMain.Text += "The file loaded is "+System.IO.Path.GetFileName(opf.FileName) + "\n";
                 norma = new Normalise(opf.FileName);
                 norma.saveToXML();
-                
+
+                orignaLength = new System.IO.FileInfo(opf.FileName).Length;
             }
         }
 
@@ -120,6 +123,8 @@ namespace Compression_Year_Project
                  if (result == true)
                  {
                      File.WriteAllBytes(dlg.FileName, compressedfile);
+
+                     compressedLength = new System.IO.FileInfo(dlg.FileName).Length;
                  }
 
                  txtMain.Text += "File saved" + '\n';
@@ -151,10 +156,18 @@ namespace Compression_Year_Project
                 if (result == true)
                 {
                     File.WriteAllText(dlg.FileName, ext.extract());
+
+                    txtMain.Text += "The file has been saved \n";
                 }
-                txtMain.Text += "The file has been saved \n";
 
             }
+        }
+
+        private void Results_Click(object sender, RoutedEventArgs e)
+        {
+            Results results = new Results(orignaLength, compressedLength);
+            txtMain.Text += results.ShowRatio() + "\n";
+            txtMain.Text += results.ShowSavedData() +"\n";
         }
     }
 }
