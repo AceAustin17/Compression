@@ -23,7 +23,7 @@ namespace Compression_Year_Project
     /// </summary>
     public partial class MainWindow : Window
     {
-        Normalise norma;
+        NormaliseText norma;
         long compressedLength;
         long orignaLength;
         public MainWindow()
@@ -39,7 +39,7 @@ namespace Compression_Year_Project
             if(opf.ShowDialog() == true)
             {
                 txtMain.Text += "The file loaded is "+System.IO.Path.GetFileName(opf.FileName) + "\n";
-                norma = new Normalise(opf.FileName);
+                norma = new NormaliseText(opf.FileName);
                 norma.saveToXML();
 
                 orignaLength = new System.IO.FileInfo(opf.FileName).Length;
@@ -103,7 +103,7 @@ namespace Compression_Year_Project
             
             Task.Factory.StartNew(() =>
                  {
-                     Compress cmp = new Compress();
+                     CompressText cmp = new CompressText();
                      return cmp;
                  }
              ).ContinueWith((task) =>{
@@ -143,7 +143,7 @@ namespace Compression_Year_Project
             if (opf.ShowDialog() == true)
             {                      
             
-            Extract ext = new Extract(File.ReadAllBytes(opf.FileName));
+            ExtractText ext = new ExtractText(File.ReadAllBytes(opf.FileName));
 
             Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
             dlg.FileName = "Original Text"; //default file name
