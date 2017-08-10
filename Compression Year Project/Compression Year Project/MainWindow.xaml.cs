@@ -24,27 +24,49 @@ namespace Compression_Year_Project
     public partial class MainWindow : Window
     {
         NormaliseText norma;
+        NormaliseImage normaImage;
         long compressedLength;
         long orignaLength;
+        string fileType;
         public MainWindow()
         {
-            InitializeComponent();    
-           
+            InitializeComponent();
+
         }
 
         private void OpenFile_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog opf = new OpenFileDialog();
             opf.Filter = "All Usable Files (*.mp3;*.jpg;*txt;*.mp4)|*.mp3;*.jpg;*.txt;*.mp4|Audio Files (*.mp3)|*.mp3|Image Files (*.jpg)|*.jpg|Text Files (*.txt)|*.txt|Video Files (*.mp4)|*.mp4";
-            if(opf.ShowDialog() == true)
+            if (opf.ShowDialog() == true)
             {
-                txtMain.Text += "The file loaded is "+System.IO.Path.GetFileName(opf.FileName) + "\n";
-                norma = new NormaliseText(opf.FileName);
-                norma.saveToXML();
+                txtMain.Text += "The file loaded is " + System.IO.Path.GetFileName(opf.FileName) + "\n";
 
+                fileType = System.IO.Path.GetExtension(opf.FileName);
+
+                switch (fileType)
+                {
+                    case ".txt":
+                        norma = new NormaliseText(opf.FileName);
+                        norma.saveToXML();
+                        break;
+                    case ".mp4":
+                        break;
+                    case ".mp3":
+                        break;
+                    case ".jpg":
+                        normaImage = new NormaliseImage(opf.FileName);
+                        normaImage.saveToXML();
+                        break;
+                    case ".JPG":
+                        normaImage = new NormaliseImage(opf.FileName);
+                        normaImage.saveToXML();
+                        break;
+                }
                 orignaLength = new System.IO.FileInfo(opf.FileName).Length;
             }
         }
+    
 
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
@@ -100,38 +122,83 @@ namespace Compression_Year_Project
             LoadingIndicator.IsBusy = true;
 
             LoadingIndicator.BusyContent = "Compressing Data";
-            
+
+            switch (fileType)
+            {
+                case ".txt":
             Task.Factory.StartNew(() =>
-                 {
-                     CompressText cmp = new CompressText();
-                     return cmp;
-                 }
-             ).ContinueWith((task) =>{
+                    {
+                        CompressText cmp = new CompressText();
+                        return cmp;
+                    }
+            ).ContinueWith((task) => {
 
-                 LoadingIndicator.IsBusy = false;
-                 task.Result.compressFile(norma);
+                LoadingIndicator.IsBusy = false;
+                task.Result.compressFile(norma);
 
-                 Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
-                 dlg.FileName = "CompressedText"; //default file name
+                Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+                dlg.FileName = "CompressedText"; //default file name
                  dlg.DefaultExt = ".cmx"; //default file extension
                  dlg.Filter = "Compressed Files (.cmx)|*.cmx"; //filter files by extension
 
                  // Show save file dialog box
                  Nullable<bool> result = dlg.ShowDialog();
 
-                 byte[] compressedfile = SmazSharp.Smaz.Compress(task.Result._compressedString);
-                 if (result == true)
-                 {
-                     File.WriteAllBytes(dlg.FileName, compressedfile);
+                byte[] compressedfile = SmazSharp.Smaz.Compress(task.Result._compressedString);
+                if (result == true)
+                {
+                    File.WriteAllBytes(dlg.FileName, compressedfile);
 
-                     compressedLength = new System.IO.FileInfo(dlg.FileName).Length;
-                 }
+                    compressedLength = new System.IO.FileInfo(dlg.FileName).Length;
+                }
 
-                 txtMain.Text += "File saved" + '\n';
-             }, TaskScheduler.FromCurrentSynchronizationContext()
+                txtMain.Text += "File saved" + '\n';
+            }, TaskScheduler.FromCurrentSynchronizationContext()
 
-            );
-            
+           );
+
+                    break;
+                case ".mp4":
+                    break;
+                case ".mp3":
+                    break;
+                case ".jpg":
+
+                    break;
+                case ".JPG":
+                    Task.Factory.StartNew(() =>
+                    {
+                       ImageCompress cmp = new ImageCompress();
+                        return cmp;
+                    }
+           ).ContinueWith((task) => {
+
+               LoadingIndicator.IsBusy = false;
+
+             //  Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+             //  dlg.FileName = "CompressedText"; //default file name
+             //   dlg.DefaultExt = ".cmx"; //default file extension
+             //   dlg.Filter = "Compressed Files (.cmx)|*.cmx"; //filter files by extension
+
+             //   // Show save file dialog box
+             //   Nullable<bool> result = dlg.ShowDialog();
+
+             ////  byte[] compressedfile = SmazSharp.Smaz.Compress(task.Result._compressedString);
+             //  if (result == true)
+             //  {
+             //      File.WriteAllBytes(dlg.FileName, compressedfile);
+
+             //      compressedLength = new System.IO.FileInfo(dlg.FileName).Length;
+             //  }
+
+               txtMain.Text += "File saved" + '\n';
+           }, TaskScheduler.FromCurrentSynchronizationContext()
+
+          );
+                    break;
+            }
+
+           
             
         }
 

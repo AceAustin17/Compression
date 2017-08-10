@@ -118,15 +118,16 @@ namespace Compression_Year_Project
                             {
                                 tmp = Math.Round(GetRandomNumber(0,1), 3);
                             }
+                            randomlist.Add(tmp);
                             inputData[i] = tmp;
                             KeyValuePair<string, double> tmpKV = new KeyValuePair<string, double>(worData[i], inputData[i]);
-
                             map.Add(tmpKV);
                         }
                     }
                     else
                     {
-                        double tmp = Math.Round(GetRandomNumber(0,1),3);                      
+                        double tmp = Math.Round(GetRandomNumber(0,1),3);
+                        randomlist.Add(tmp);
                         inputData[i] = tmp;
                         KeyValuePair<string, double> tmpKV = new KeyValuePair<string, double>(worData[i], inputData[i]);
                         map.Add(tmpKV);
