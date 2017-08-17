@@ -34,7 +34,7 @@ namespace Compression_Year_Project
                 {
 
                     Color c = image.GetPixel(x, y);
-                    if (ColourList.Any())
+                    if (!this.ColourList.Any())
                     {
                         double temp = Math.Round(GetRandomNumber(0, 1), 3);
                         ColourList.Add(new KeyValuePair<Color, double>(c, temp));
@@ -47,10 +47,9 @@ namespace Compression_Year_Project
                         double temp;
                         foreach (KeyValuePair<Color, double> kv in this.ColourList)
                         {
-                            if (kv.Key.Equals(c))
+                            if (kv.Key == c)
                             {
                                 numArray[x,y] = kv.Value;
-
                                 check = false;
                                 break;
                             }
@@ -78,8 +77,8 @@ namespace Compression_Year_Project
             int len = (image.Width - 1) * (image.Height - 1);
             DataPoint[] d = new DataPoint[len];
             DataSet DS = new DataSet();
-            double[] tmpInput = new double[3];
-            double[] tmpOutput = new double[1];
+            double[] tmpInput = new double[1];
+            double[] tmpOutput = new double[3];
             int count = 0;
             for (int x = 0; x < image.Width; x++)
             {
@@ -87,10 +86,10 @@ namespace Compression_Year_Project
                 {
                     if(x !=image.Width-1 && y != image.Height-1 )
                     {
-                        tmpInput[0] = numArray[x + 1, y];
-                        tmpInput[1] = numArray[x, y +1];
-                        tmpInput[2] = numArray[x +1, y + 1];
-                        tmpOutput[0] = numArray[x, y];
+                        tmpOutput[0] = numArray[x + 1, y];
+                        tmpOutput[1] = numArray[x, y + 1];
+                        tmpOutput[2] = numArray[x +1, y + 1];
+                        tmpInput[0] = numArray[x, y];
                         d[count] = new DataPoint(tmpInput, tmpOutput);
                         DS.data.Add(d[count]);
                         count++;
@@ -108,6 +107,27 @@ namespace Compression_Year_Project
         {
 
             return random.NextDouble() * (maximum - minimum) + minimum;
+        }
+        public Bitmap _image
+        {
+            get
+            {
+                return image;
+            }
+        }
+        public double[,] _numArray
+        {
+            get
+            {
+                return numArray;
+            }
+        }
+        public List<KeyValuePair<Color,double>> _ColourList
+        {
+            get
+            {
+                return ColourList;
+            }
         }
     }
 }

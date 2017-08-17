@@ -86,8 +86,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CImage.cs" />
     <Compile Include="Compress.cs" />
     <Compile Include="Extract.cs" />
+    <Compile Include="ExtractImage.cs" />
     <Compile Include="ImageCompress.cs" />
     <Compile Include="Normalise.cs" />
     <Compile Include="NormaliseImage.cs" />
