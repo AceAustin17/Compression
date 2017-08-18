@@ -16,9 +16,11 @@ namespace Compression_Year_Project
         private NetworkTrainer nt;
         private DataSet ds;
         private CImage ci;
+        private int iter = 1;
+       
         public ImageCompress()
-        {
-            int[] layersizes = new int[4] { 1,3,2,3};
+        { 
+            int[] layersizes = new int[4] { 1,3,2,2};
             ActivationFunction[] activFunctions = new ActivationFunction[4]{ ActivationFunction.None,ActivationFunction.Sigmoid, ActivationFunction.Sigmoid, ActivationFunction.Linear };
 
 
@@ -34,7 +36,7 @@ namespace Compression_Year_Project
 
             nt.maxError = 0.1;
             nt.maxiterations = 100;
-            nt.nudgewindow = 500;
+            nt.nudgewindow = 50;
             nt.traininrate = 0.1;
             nt.TrainDataset();
 
@@ -50,31 +52,72 @@ namespace Compression_Year_Project
             File.WriteAllLines("../xornetwrk.txt", filedata);
         }
         public override void compressFile(NormaliseImage norm)
-        {        
-        double[] tmpInput = new double[1];
-        double[] tmpOutput = new double[3];
-
-            ci = new CImage(norm._image.Height, norm._image.Width);
+        {
+            double[] tmpInput = new double[1];
+            double[] tmpOutput = new double[2];
+           List<CImage.posCol> pcList = new List<CImage.posCol>();
+            CImage.posCol pc = new CImage.posCol();
+            ci = new CImage(norm._image.Width, norm._image.Height);
             ci._ColourList = norm._ColourList;
-            ci._numArray = norm._numArray;
-            //for (int x = 0; x < norm._image.Width; x++)
-            //{
-            //    for (int y = 0; y < norm._image.Height; y++)
-            //    {
-            //        if (x != norm._image.Width - 1 && y != norm._image.Height - 1)
-            //        {
-            //            tmpOutput[0] = norm._numArray[x + 1, y];
-            //            tmpOutput[1] = norm._numArray[x, y + 1];
-            //            tmpOutput[2] = norm._numArray[x + 1, y + 1];
-            //            tmpInput[0] = norm._numArray[x, y];
-            //            bpnetwork.run(ref tmpInput, out tmpOutput);
+            bool first = true;
+            bool second = true;
+            bool third = false;
+            for (int x = 0; x < norm._image.Width; x++)
+            {
+                for (int y = 0; y < norm._image.Height; y++)
+                  {
+                    if (x != norm._image.Width - 1 && y != norm._image.Height - 1)
+                    {
+                        tmpInput[0] = norm._numArray[x, y];
+                        bpnetwork.run(ref tmpInput, out tmpOutput);
 
-            //            double checkVal = Math.Round(tmpOutput[0], 3);
-
-            //        }
-            //    }
-            //}
+                        double checkVal = Math.Round(tmpOutput[0], 2);
+                        if(first)
+                        {
+                          ci._numarray[x, y] = norm._numArray[x, y];
+                        }                        
+                        //foreach (KeyValuePair<Color, double> kv in norm._ColourList)
+                        //{
+                        //    if ((kv.Value - checkVal >= -0.03) && (kv.Value - checkVal <= 0.03))
+                        //    {
+                        //        if (second)
+                        //        {
+                        //            pc.x = x;
+                        //            pc.y = y;
+                        //            pc.num = iter;
+                        //            iter++;
+                        //            first = false;
+                        //            second = false;
+                        //            third = true;
+                        //            break;
+                        //        }
+                        //        else
+                        //        {
+                        //            pc.num = iter;
+                        //            iter++;
+                        //            first = false;
+                        //            break;
+                        //        }
+                        //    }
+                            
+                        //}
+                        //if (third)
+                        //{
+                        //    pcList.Add(pc);
+                        //    second = true;
+                        //    first = true;
+                        //    third = false;
+                        //}
+                    }
+                    else
+                    {
+                        ci._numarray[x, y] = norm._numArray[x, y];
+                    }
+                }
+            }
+            ci._PosList = pcList.ToArray();
         }
+        
         public BackPropNetwork _bpnetwwork
         {
             get

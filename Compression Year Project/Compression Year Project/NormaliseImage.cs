@@ -78,7 +78,7 @@ namespace Compression_Year_Project
             DataPoint[] d = new DataPoint[len];
             DataSet DS = new DataSet();
             double[] tmpInput = new double[1];
-            double[] tmpOutput = new double[3];
+            double[] tmpOutput = new double[2];
             int count = 0;
             for (int x = 0; x < image.Width; x++)
             {
@@ -88,7 +88,6 @@ namespace Compression_Year_Project
                     {
                         tmpOutput[0] = numArray[x + 1, y];
                         tmpOutput[1] = numArray[x, y + 1];
-                        tmpOutput[2] = numArray[x +1, y + 1];
                         tmpInput[0] = numArray[x, y];
                         d[count] = new DataPoint(tmpInput, tmpOutput);
                         DS.data.Add(d[count]);

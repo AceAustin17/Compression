@@ -24,7 +24,7 @@ namespace Compression_Year_Project
         {
             double ratio = original / (double)compressed;
 
-            return "The compression ratio is " + Math.Round(ratio,4) + ":1";
+            return "The compression ratio is " + Math.Round(ratio,1) + ":1";
         }
         public string ShowSavedData()
         {

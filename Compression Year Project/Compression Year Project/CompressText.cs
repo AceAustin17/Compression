@@ -69,7 +69,7 @@ namespace Compression_Year_Project
                 tmpInput[0] = norm._inputData[i];
                 bpnetwork.run(ref tmpInput, out tmpOutput);
 
-                double checkVal = Math.Round(tmpOutput[0], 3);
+                double checkVal = Math.Round(tmpOutput[0], 2);
                 
                 int check = 0;
                 foreach (KeyValuePair<string, double> kv in norm._map)

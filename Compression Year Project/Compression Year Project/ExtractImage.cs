@@ -18,22 +18,41 @@ namespace Compression_Year_Project
         public override Bitmap extract()
         {
             Bitmap bmp = new Bitmap(cimage._width, cimage._height);
-            Color tempColor;
+
             for (int x = 0; x < cimage._width; x++)
             {
                 for (int y = 0; y < cimage._height; y++)
                 {
-                    foreach(KeyValuePair<Color,double> kv in cimage._ColourList)
+                    if (cimage._numarray[x, y] != 0)
                     {
-                        if(kv.Value == cimage._numArray[x,y])
+                        foreach (KeyValuePair<Color, double> kv in cimage._ColourList)
                         {
-                            tempColor = kv.Key;
-                            bmp.SetPixel(x, y, tempColor);
-                            break;
+                            if (cimage._numarray[x, y] == kv.Value)
+                            {
+                                bmp.SetPixel(x, y, kv.Key);
+                                break;
+                            }
                         }
                     }
                 }
-            }
+            }            
+                for(int t =0 ; t < cimage._PosList.Length;t++)
+                {
+                    foreach (KeyValuePair<Color, double> kv in cimage._ColourList)
+                    {
+                        if (cimage._numarray[cimage._PosList[t].x, cimage._PosList[t].y] == kv.Value)
+                        {
+                            for (int i = 1; i <= cimage._PosList[t].num; i++)
+                            {
+                                if (cimage._PosList[t].x + i < cimage._width)
+                                {
+                                    bmp.SetPixel(cimage._PosList[t].x + i, cimage._PosList[t].y, kv.Key);
+                                  }
+                            }
+                        break;
+                        }
+                    }
+                }            
             return bmp;
         }
     }

@@ -231,11 +231,6 @@ namespace Compression_Year_Project
                    byte[] compressedImagefile = SerializeAndCompress(task.Result._ci);
                    if (result == true)
                    {
-
-
-                       //serialize
-
-
                        File.WriteAllBytes(dlg.FileName, compressedImagefile);
                        compressedLength = new System.IO.FileInfo(dlg.FileName).Length;
                        //  task.Result._ci.Save(dlg.FileName,jpgEncoder,myEncoderParameters);
