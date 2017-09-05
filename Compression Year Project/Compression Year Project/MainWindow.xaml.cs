@@ -43,7 +43,7 @@ namespace Compression_Year_Project
         {
             txtMain.Foreground = System.Windows.Media.Brushes.Black;
             OpenFileDialog opf = new OpenFileDialog();
-            opf.Filter = "All Usable Files (*.mp3;*.jpg;*txt;*.mp4)|*.mp3;*.jpg;*.txt;*.mp4|Audio Files (*.mp3)|*.mp3|Image Files (*.jpg)|*.jpg|Text Files (*.txt)|*.txt|Video Files (*.mp4)|*.mp4";
+            opf.Filter = "All Usable Files (*.mp3;*.jpg;*txt;*.mp4;*.png)|*.mp3;*.jpg;*.txt;*.mp4;*.png|Audio Files (*.mp3)|*.mp3|Image Files (*.jpg;*.png)|*.jpg;*.png|Text Files (*.txt)|*.txt|Video Files (*.mp4)|*.mp4";
             if (opf.ShowDialog() == true)
             {
                 txtMain.Text += "The file loaded is " + System.IO.Path.GetFileName(opf.FileName) + "\n";
@@ -61,10 +61,8 @@ namespace Compression_Year_Project
                     case ".mp3":
                         break;
                     case ".jpg":
-                        normaImage = new NormaliseImage(opf.FileName);
-                        normaImage.saveToXML();
-                        break;
                     case ".JPG":
+                    case ".png":
                         normaImage = new NormaliseImage(opf.FileName);
                         normaImage.saveToXML();
                         break;
@@ -97,10 +95,8 @@ namespace Compression_Year_Project
                 case ".mp3":
                     break;
                 case ".jpg":
-                    normaImage = new NormaliseImage(fileName);
-                    normaImage.saveToXML();
-                    break;
                 case ".JPG":
+                case ".png":
                     normaImage = new NormaliseImage(fileName);
                     normaImage.saveToXML();
                     break;
@@ -122,6 +118,9 @@ namespace Compression_Year_Project
                     check = true;
                     break;
                 case ".jpg":
+                    check = true;
+                    break;
+                case ".png":
                     check = true;
                     break;
                 case ".JPG":
@@ -207,9 +206,8 @@ namespace Compression_Year_Project
                     case ".mp3":
                         break;
                     case ".jpg":
-
-                        break;
                     case ".JPG":
+                    case ".png":
                         Task.Factory.StartNew(() =>
                         {
                             ImageCompress cmp = new ImageCompress();
@@ -262,9 +260,9 @@ namespace Compression_Year_Project
                         ExtractImage extI = new ExtractImage(cimage);
 
                         Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
-                        dlg.FileName = "Original Image"; //default file name
+                        dlg.FileName = "Extracted Image"; //default file name
                         dlg.DefaultExt = ".jpg"; //default file extension
-                        dlg.Filter = "Image File (*.jpg)|*.jpg"; //filter files by extension
+                        dlg.Filter = "Image File (*.jpg;.png)|*.jpg;*.png"; //filter files by extension
 
                         // Show save file dialog box
                         Nullable<bool> result = dlg.ShowDialog();
@@ -284,7 +282,7 @@ namespace Compression_Year_Project
                             // objects. In this case, there is only one  
                             // EncoderParameter object in the array.  
                             EncoderParameters myEncoderParameters = new EncoderParameters(1);
-                            EncoderParameter myEncoderParameter = new EncoderParameter(myEncoder, 90L);
+                            EncoderParameter myEncoderParameter = new EncoderParameter(myEncoder, 100L);
                             myEncoderParameters.Param[0] = myEncoderParameter;
 
                             extI.extract().Save(dlg.FileName,jpgEncoder,myEncoderParameters);
@@ -313,30 +311,6 @@ namespace Compression_Year_Project
                 }
             }
         }
-        // Code adapted from http://www.morgantechspace.com/2013/08/convert-object-to-byte-array-and-vice.html
-        //private byte[] ObjectToByteArray(Object obj)
-        //{
-        //    if (obj == null)
-        //        return null;
-
-        //    BinaryFormatter bf = new BinaryFormatter();
-        //    MemoryStream ms = new MemoryStream();
-        //    bf.Serialize(ms, obj);
-
-        //    return ms.ToArray();
-        //}
-
-        //// Convert a byte array to an Object
-        //private Object ByteArrayToObject(byte[] arrBytes)
-        //{
-        //    MemoryStream memStream = new MemoryStream();
-        //    BinaryFormatter binForm = new BinaryFormatter();
-        //    memStream.Write(arrBytes, 0, arrBytes.Length);
-        //    memStream.Seek(0, SeekOrigin.Begin);
-        //    Object obj = (Object)binForm.Deserialize(memStream);
-
-        //    return obj;
-        //}
         private void Results_Click(object sender, RoutedEventArgs e)
         {
             Results results = new Results(orignaLength, compressedLength);

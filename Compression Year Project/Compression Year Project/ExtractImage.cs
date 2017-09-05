@@ -19,40 +19,17 @@ namespace Compression_Year_Project
         {
             Bitmap bmp = new Bitmap(cimage._width, cimage._height);
 
-            for (int x = 0; x < cimage._width; x++)
+            for (int i = 0; i < cimage._PosList.Length; i++)
             {
-                for (int y = 0; y < cimage._height; y++)
-                {
-                    if (cimage._numarray[x, y] != 0)
+                for (int t = 0; t < cimage._PosList[i].num; t++)
+                {                     
+                    if ((cimage._PosList[i].x < cimage._width) && (cimage._PosList[i].y + t < cimage._height))
                     {
-                        foreach (KeyValuePair<Color, double> kv in cimage._ColourList)
-                        {
-                            if (cimage._numarray[x, y] == kv.Value)
-                            {
-                                bmp.SetPixel(x, y, kv.Key);
-                                break;
-                            }
-                        }
-                    }
+                        bmp.SetPixel(cimage._PosList[i].x, cimage._PosList[i].y + t, cimage._PosList[i].col);
+                    }                        
+                    
                 }
-            }            
-                for(int t =0 ; t < cimage._PosList.Length;t++)
-                {
-                    foreach (KeyValuePair<Color, double> kv in cimage._ColourList)
-                    {
-                        if (cimage._numarray[cimage._PosList[t].x, cimage._PosList[t].y] == kv.Value)
-                        {
-                            for (int i = 1; i <= cimage._PosList[t].num; i++)
-                            {
-                                if (cimage._PosList[t].x + i < cimage._width)
-                                {
-                                    bmp.SetPixel(cimage._PosList[t].x + i, cimage._PosList[t].y, kv.Key);
-                                  }
-                            }
-                        break;
-                        }
-                    }
-                }            
+            }
             return bmp;
         }
     }

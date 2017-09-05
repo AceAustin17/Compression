@@ -16,12 +16,11 @@ namespace Compression_Year_Project
         private NetworkTrainer nt;
         private DataSet ds;
         private CImage ci;
-        private int iter = 1;
        
         public ImageCompress()
         { 
-            int[] layersizes = new int[4] { 1,3,2,2};
-            ActivationFunction[] activFunctions = new ActivationFunction[4]{ ActivationFunction.None,ActivationFunction.Sigmoid, ActivationFunction.Sigmoid, ActivationFunction.Linear };
+            int[] layersizes = new int[5] {1,3,3,2,1};
+            ActivationFunction[] activFunctions = new ActivationFunction[5]{ ActivationFunction.None,ActivationFunction.Sigmoid,ActivationFunction.Sigmoid, ActivationFunction.Sigmoid, ActivationFunction.Linear };
 
 
             XmlDocument xdoc = new XmlDocument();
@@ -30,13 +29,12 @@ namespace Compression_Year_Project
             ds = new DataSet();
             ds.Load((XmlElement)xdoc.DocumentElement.ChildNodes[0]);
 
-
             bpnetwork = new BackPropNetwork(layersizes, activFunctions);
             nt = new NetworkTrainer(bpnetwork, ds);
 
             nt.maxError = 0.1;
-            nt.maxiterations = 100;
-            nt.nudgewindow = 50;
+            nt.maxiterations = 100000;
+            nt.nudgewindow = 500;
             nt.traininrate = 0.1;
             nt.TrainDataset();
 
@@ -54,66 +52,67 @@ namespace Compression_Year_Project
         public override void compressFile(NormaliseImage norm)
         {
             double[] tmpInput = new double[1];
-            double[] tmpOutput = new double[2];
-           List<CImage.posCol> pcList = new List<CImage.posCol>();
-            CImage.posCol pc = new CImage.posCol();
+            double[] tmpOutput = new double[1];
+            List<CImage.posCol> pcList = new List<CImage.posCol>();
+            
             ci = new CImage(norm._image.Width, norm._image.Height);
-            ci._ColourList = norm._ColourList;
-            bool first = true;
-            bool second = true;
-            bool third = false;
-            for (int x = 0; x < norm._image.Width; x++)
-            {
-                for (int y = 0; y < norm._image.Height; y++)
-                  {
-                    if (x != norm._image.Width - 1 && y != norm._image.Height - 1)
-                    {
+           
+            bool checkloopdone;
+            for (int y = 0; y < norm._image.Height; y++)
+            {           
+                checkloopdone = true;
+                int num = 1;
+                CImage.posCol pc = new CImage.posCol();
+                    for (int x = 0; x < norm._image.Width; x++)
+                    { 
                         tmpInput[0] = norm._numArray[x, y];
                         bpnetwork.run(ref tmpInput, out tmpOutput);
-
                         double checkVal = Math.Round(tmpOutput[0], 2);
-                        if(first)
+                        bool one = false;
+                        Color col = new Color();
+                        foreach (KeyValuePair<Color, double> kv in norm._ColourList)
                         {
-                          ci._numarray[x, y] = norm._numArray[x, y];
-                        }                        
-                        //foreach (KeyValuePair<Color, double> kv in norm._ColourList)
-                        //{
-                        //    if ((kv.Value - checkVal >= -0.03) && (kv.Value - checkVal <= 0.03))
-                        //    {
-                        //        if (second)
-                        //        {
-                        //            pc.x = x;
-                        //            pc.y = y;
-                        //            pc.num = iter;
-                        //            iter++;
-                        //            first = false;
-                        //            second = false;
-                        //            third = true;
-                        //            break;
-                        //        }
-                        //        else
-                        //        {
-                        //            pc.num = iter;
-                        //            iter++;
-                        //            first = false;
-                        //            break;
-                        //        }
-                        //    }
-                            
-                        //}
-                        //if (third)
-                        //{
-                        //    pcList.Add(pc);
-                        //    second = true;
-                        //    first = true;
-                        //    third = false;
-                        //}
-                    }
-                    else
-                    {
-                        ci._numarray[x, y] = norm._numArray[x, y];
-                    }
-                }
+                            if ((kv.Value - checkVal >= -0.02) && (kv.Value - checkVal <= 0.02))
+                            {
+                                one = true;
+                                col = kv.Key;
+                                num++;
+                                break;
+                            }
+                        }
+                        if (checkloopdone)
+                        {
+                            if (one)
+                            {
+                                pc.x = x;
+                                pc.y = y;
+                                pc.col = col;
+                                pc.num = num;
+                            }
+                        }
+                        else if (one)
+                        {
+                            pc.num = num;
+                        }
+                        if(!one)
+                        {
+                            foreach (KeyValuePair<Color, double> kv in norm._ColourList)
+                            {
+                                if(kv.Value == tmpInput[0])
+                                {
+                                pc.col= kv.Key;
+                                break;
+                                }
+                            }
+                            pc.x = x;
+                            pc.y = y;
+                            pc.num = 1;
+                            pcList.Add(pc);
+                        }
+                        one = false;
+                        checkloopdone = false;                   
+                }                
+                    pcList.Add(pc);           
             }
             ci._PosList = pcList.ToArray();
         }

@@ -32,7 +32,6 @@ namespace Compression_Year_Project
             {
                 for(int y = 0; y < image.Height;y++)
                 {
-
                     Color c = image.GetPixel(x, y);
                     if (!this.ColourList.Any())
                     {
@@ -78,7 +77,7 @@ namespace Compression_Year_Project
             DataPoint[] d = new DataPoint[len];
             DataSet DS = new DataSet();
             double[] tmpInput = new double[1];
-            double[] tmpOutput = new double[2];
+            double[] tmpOutput = new double[1];
             int count = 0;
             for (int x = 0; x < image.Width; x++)
             {
@@ -86,9 +85,9 @@ namespace Compression_Year_Project
                 {
                     if(x !=image.Width-1 && y != image.Height-1 )
                     {
-                        tmpOutput[0] = numArray[x + 1, y];
-                        tmpOutput[1] = numArray[x, y + 1];
+
                         tmpInput[0] = numArray[x, y];
+                        tmpOutput[0] = numArray[x + 1, y];
                         d[count] = new DataPoint(tmpInput, tmpOutput);
                         DS.data.Add(d[count]);
                         count++;
@@ -104,7 +103,6 @@ namespace Compression_Year_Project
         }
         private double GetRandomNumber(double minimum, double maximum)
         {
-
             return random.NextDouble() * (maximum - minimum) + minimum;
         }
         public Bitmap _image

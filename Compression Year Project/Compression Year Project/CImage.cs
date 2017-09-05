@@ -18,16 +18,15 @@ namespace Compression_Year_Project
             public int x { get; set; }
             public int y { get; set; }
             public int num { get; set; }
+            public Color col { get; set; }
         }
-        private List<KeyValuePair<Color, double>> ColourList = new List<KeyValuePair<Color, double>>();
+      //  private List<KeyValuePair<Color, double>> ColourList = new List<KeyValuePair<Color, double>>();
         private posCol[] PosList;
-        private double[,] numarray;
 
         public CImage(int width, int height)
         {
             this.height = height;
             this.width = width;
-            numarray = new double[width, height];
         }          
         public posCol[] _PosList
         {
@@ -40,25 +39,17 @@ namespace Compression_Year_Project
                 PosList = value;
             }
         }
-
-        public double[,] _numarray
-        {
-            get
-            {
-                return numarray;
-            }            
-        }
-        public List<KeyValuePair<Color, double>> _ColourList
-        {
-            get
-            {
-                return this.ColourList;
-            }
-            set
-            {
-                this.ColourList = value;
-            }
-        }
+        //public List<KeyValuePair<Color, double>> _ColourList
+        //{
+        //    get
+        //    {
+        //        return this.ColourList;
+        //    }
+        //    set
+        //    {
+        //        this.ColourList = value;
+        //    }
+        //}
       
 
         public int _width
