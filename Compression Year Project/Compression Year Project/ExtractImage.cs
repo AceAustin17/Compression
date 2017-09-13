@@ -23,9 +23,9 @@ namespace Compression_Year_Project
             {
                 for (int t = 0; t < cimage._PosList[i].num; t++)
                 {                     
-                    if ((cimage._PosList[i].x < cimage._width) && (cimage._PosList[i].y + t < cimage._height))
+                    if ((cimage._PosList[i].x + t < cimage._width) && (cimage._PosList[i].y < cimage._height))
                     {
-                        bmp.SetPixel(cimage._PosList[i].x, cimage._PosList[i].y + t, cimage._PosList[i].col);
+                        bmp.SetPixel(cimage._PosList[i].x +t, cimage._PosList[i].y, cimage._PosList[i].col);
                     }                        
                     
                 }

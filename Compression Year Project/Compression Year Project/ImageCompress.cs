@@ -19,8 +19,8 @@ namespace Compression_Year_Project
        
         public ImageCompress()
         { 
-            int[] layersizes = new int[5] {1,3,3,2,1};
-            ActivationFunction[] activFunctions = new ActivationFunction[5]{ ActivationFunction.None,ActivationFunction.Sigmoid,ActivationFunction.Sigmoid, ActivationFunction.Sigmoid, ActivationFunction.Linear };
+            int[] layersizes = new int[3] {8,18,8};
+            ActivationFunction[] activFunctions = new ActivationFunction[3]{ActivationFunction.None,ActivationFunction.Sigmoid, ActivationFunction.Linear };
 
 
             XmlDocument xdoc = new XmlDocument();
@@ -32,8 +32,8 @@ namespace Compression_Year_Project
             bpnetwork = new BackPropNetwork(layersizes, activFunctions);
             nt = new NetworkTrainer(bpnetwork, ds);
 
-            nt.maxError = 0.1;
-            nt.maxiterations = 100000;
+            nt.maxError = 0.001;
+            nt.maxiterations = 10000;
             nt.nudgewindow = 500;
             nt.traininrate = 0.1;
             nt.TrainDataset();
@@ -51,12 +51,10 @@ namespace Compression_Year_Project
         }
         public override void compressFile(NormaliseImage norm)
         {
-            double[] tmpInput = new double[1];
-            double[] tmpOutput = new double[1];
+            double[] tmpInput = new double[8];
+            double[] tmpOutput = new double[8];
             List<CImage.posCol> pcList = new List<CImage.posCol>();
-            
-            ci = new CImage(norm._image.Width, norm._image.Height);
-           
+            ci = new CImage(norm._image.Width, norm._image.Height);           
             bool checkloopdone;
             for (int y = 0; y < norm._image.Height; y++)
             {           
@@ -64,15 +62,34 @@ namespace Compression_Year_Project
                 int num = 1;
                 CImage.posCol pc = new CImage.posCol();
                     for (int x = 0; x < norm._image.Width; x++)
-                    { 
-                        tmpInput[0] = norm._numArray[x, y];
+                    {
+                        foreach (KeyValuePair<double, double[]> kv in norm._DataList)
+                        {
+                            if (kv.Key == norm._numArray[x, y])
+                            {
+                                tmpInput = kv.Value;
+                                break;
+                            }
+                        }
                         bpnetwork.run(ref tmpInput, out tmpOutput);
-                        double checkVal = Math.Round(tmpOutput[0], 2);
+                        for(int i= 0; i < 8;i++)
+                        {
+                        tmpOutput[i] = Math.Round(tmpOutput[i]);
+                        }
+                        double checkVal = 0;
+                        foreach (KeyValuePair<double, double[]> kvk in norm._DataList)
+                        {
+                            if(tmpOutput.SequenceEqual(kvk.Value))
+                            {
+                               checkVal = kvk.Key;
+                               break;
+                            }
+                        }
                         bool one = false;
                         Color col = new Color();
                         foreach (KeyValuePair<Color, double> kv in norm._ColourList)
                         {
-                            if ((kv.Value - checkVal >= -0.02) && (kv.Value - checkVal <= 0.02))
+                            if (kv.Value == checkVal)
                             {
                                 one = true;
                                 col = kv.Key;

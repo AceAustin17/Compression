@@ -12,9 +12,10 @@ namespace Compression_Year_Project
     class NormaliseImage : Normalise
     {
         private double[,] numArray;
-
+        private BinaryData binaryD = new BinaryData(8);
         private List<double> randDoubles = new List<double>();
         private List<KeyValuePair<Color, double>> ColourList = new List<KeyValuePair<Color, double>>();
+        private List<KeyValuePair<double, double[]>> dataList = new List<KeyValuePair<double, double[]>>();
         Random random = new Random();
         private Bitmap image;
 
@@ -25,7 +26,6 @@ namespace Compression_Year_Project
             createArray();
 
         }
-
         private void createArray()
         {
             for (int x = 0; x < image.Width; x++)
@@ -35,8 +35,9 @@ namespace Compression_Year_Project
                     Color c = image.GetPixel(x, y);
                     if (!this.ColourList.Any())
                     {
-                        double temp = Math.Round(GetRandomNumber(0, 1), 3);
+                        double temp = GetRandomNumber(0,1);
                         ColourList.Add(new KeyValuePair<Color, double>(c, temp));
+                        dataList.Add(new KeyValuePair<double, double[]>(temp, binaryD.GetData()));
                         randDoubles.Add(temp);
                         numArray[x, y] = temp;
                     }
@@ -55,15 +56,15 @@ namespace Compression_Year_Project
                         }
                         if(check)
                         {
-                            temp = Math.Round(GetRandomNumber(0, 1), 3);
+                            temp = GetRandomNumber(0,1);
                             while (randDoubles.Contains(temp))
                             {
-                                temp = Math.Round(GetRandomNumber(0, 1), 3);
+                                temp = GetRandomNumber(0,1);
                             }
                             randDoubles.Add(temp);
                             numArray[x,y] = temp;
-
                             ColourList.Add(new KeyValuePair<Color, double>(c, temp));
+                            dataList.Add(new KeyValuePair<double, double[]>(temp, binaryD.GetData()));
                         }                        
                     }
                    
@@ -76,8 +77,8 @@ namespace Compression_Year_Project
             int len = (image.Width - 1) * (image.Height - 1);
             DataPoint[] d = new DataPoint[len];
             DataSet DS = new DataSet();
-            double[] tmpInput = new double[1];
-            double[] tmpOutput = new double[1];
+            double[] tmpInput = new double[8];
+            double[] tmpOutput = new double[8];
             int count = 0;
             for (int x = 0; x < image.Width; x++)
             {
@@ -86,8 +87,22 @@ namespace Compression_Year_Project
                     if(x !=image.Width-1 && y != image.Height-1 )
                     {
 
-                        tmpInput[0] = numArray[x, y];
-                        tmpOutput[0] = numArray[x + 1, y];
+                        foreach(KeyValuePair<double,double[]> kv in dataList)
+                        {
+                            if(kv.Key == numArray[x,y])
+                            {
+                                tmpInput = kv.Value;
+                                break;
+                            }
+                        }
+                        foreach (KeyValuePair<double, double[]> kv in dataList)
+                        {
+                            if (kv.Key == numArray[x + 1, y])
+                            {
+                                tmpOutput = kv.Value;
+                                break;
+                            }
+                        }
                         d[count] = new DataPoint(tmpInput, tmpOutput);
                         DS.data.Add(d[count]);
                         count++;
@@ -101,9 +116,14 @@ namespace Compression_Year_Project
 
             doc.Save("./ann.xml");
         }
+
+        private double GetNumber(double x)
+        {
+            return x += 0.03;
+        }
         private double GetRandomNumber(double minimum, double maximum)
         {
-            return random.NextDouble() * (maximum - minimum) + minimum;
+            return Math.Round(random.NextDouble() * (maximum - minimum) + minimum,3);
         }
         public Bitmap _image
         {
@@ -124,6 +144,13 @@ namespace Compression_Year_Project
             get
             {
                 return ColourList;
+            }
+        }
+        public List<KeyValuePair<double, double[]>> _DataList
+        {
+            get
+            {
+                return dataList;
             }
         }
     }

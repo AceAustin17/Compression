@@ -86,6 +86,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BinaryData.cs" />
     <Compile Include="CImage.cs" />
     <Compile Include="Compress.cs" />
     <Compile Include="Extract.cs" />
