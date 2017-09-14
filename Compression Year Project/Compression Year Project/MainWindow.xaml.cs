@@ -6,6 +6,7 @@ using Microsoft.Win32;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Drawing.Imaging;
 using System.IO.Compression;
+using System.Text;
 
 namespace Compression_Year_Project
 {
@@ -16,13 +17,85 @@ namespace Compression_Year_Project
     {
         NormaliseText norma;
         NormaliseImage normaImage;
-        long compressedLength;
-        long orignaLength;
+        long compressedLength = 0;
+        long orignaLength = 0;
         string fileType;
         public MainWindow()
         {
             InitializeComponent();
+            Loaded += Application_Startup;
+        }
+        private void Application_Startup(object sender, RoutedEventArgs e)
+        {
+            string[] args = System.Environment.GetCommandLineArgs();
+            string path = null;
+            for (int i = 0; i <= args.Length - 1; i++)
+            {
+                if (args[i].EndsWith(".exe") == false)
+                {
+                    path = args[i];
+                }
+            }
+            if ( path != null)
+            {
+                fileType = System.IO.Path.GetExtension(path);
+                switch (fileType)
+                {
+                    case ".cmi":
+                        CImage cimage = DecompressAndDeserialize<CImage>(File.ReadAllBytes(path));
+                        ExtractImage extI = new ExtractImage(cimage);
 
+                        Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+                        dlg.FileName = "Extracted Image"; //default file name
+                        dlg.DefaultExt = ".jpg"; //default file extension
+                        dlg.Filter = "Image File (*.jpg;.png)|*.jpg;*.png"; //filter files by extension
+
+                        // Show save file dialog box
+                        Nullable<bool> result = dlg.ShowDialog();
+
+                        if (result == true)
+                        {
+
+                            ImageCodecInfo jpgEncoder = GetEncoder(ImageFormat.Jpeg);
+
+                            //Create an Encoder object based on the GUID
+                            // for the Quality parameter category.  
+                            System.Drawing.Imaging.Encoder myEncoder =
+                            System.Drawing.Imaging.Encoder.Quality;
+
+                            // Create an EncoderParameters object.  
+                            // An EncoderParameters object has an array of EncoderParameter  
+                            // objects. In this case, there is only one  
+                            // EncoderParameter object in the array.  
+                            EncoderParameters myEncoderParameters = new EncoderParameters(1);
+                            EncoderParameter myEncoderParameter = new EncoderParameter(myEncoder, 100L);
+                            myEncoderParameters.Param[0] = myEncoderParameter;
+
+                            extI.extract().Save(dlg.FileName, jpgEncoder, myEncoderParameters);
+                            txtMain.Text += "The file has been saved \n";
+                        }
+                        break;
+                    case ".cmx":
+
+                        ExtractText ext = new ExtractText(File.ReadAllBytes(path));
+
+                        Microsoft.Win32.SaveFileDialog dlg1 = new Microsoft.Win32.SaveFileDialog();
+                        dlg1.FileName = "Original Text"; //default file name
+                        dlg1.DefaultExt = ".txt"; //default file extension
+                        dlg1.Filter = "Text File (*.txt)|*.txt"; //filter files by extension
+
+                        // Show save file dialog box
+                        Nullable<bool> result1 = dlg1.ShowDialog();
+
+                        if (result1 == true)
+                        {
+                            File.WriteAllText(dlg1.FileName, ext.extract());
+
+                            txtMain.Text += "The file has been saved \n";
+                        }
+                        break;
+                }
+            }
         }
 
         private void OpenFile_Click(object sender, RoutedEventArgs e)
@@ -234,8 +307,6 @@ namespace Compression_Year_Project
             txtMain.Foreground = System.Windows.Media.Brushes.Black;
             OpenFileDialog opf = new OpenFileDialog();
             opf.Filter = "Compressed Files (*.cmx;*.cmi)|*.cmx;*.cmi";
-
-
             if (opf.ShowDialog() == true)
             {
                 fileType = System.IO.Path.GetExtension(opf.FileName);
@@ -298,10 +369,20 @@ namespace Compression_Year_Project
             }
         }
         private void Results_Click(object sender, RoutedEventArgs e)
+
         {
-            Results results = new Results(orignaLength, compressedLength);
-            txtMain.Text += results.ShowRatio() + "\n";
-            txtMain.Text += results.ShowSavedData() + "\n";
+            if (orignaLength == 0 || compressedLength == 0)
+            {
+
+                txtMain.Foreground = System.Windows.Media.Brushes.Red;
+                txtMain.Text += "No files to compare" + "\n";
+            }
+            else
+            {
+                Results results = new Results(orignaLength, compressedLength);
+                txtMain.Text += results.ShowRatio() + "\n";
+                txtMain.Text += results.ShowSavedData() + "\n";
+            }
         }
         private static ImageCodecInfo GetEncoder(ImageFormat format)
         {

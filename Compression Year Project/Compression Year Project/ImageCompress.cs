@@ -32,7 +32,7 @@ namespace Compression_Year_Project
             bpnetwork = new BackPropNetwork(layersizes, activFunctions);
             nt = new NetworkTrainer(bpnetwork, ds);
 
-            nt.maxError = 0.001;
+            nt.maxError = 0.0001;
             nt.maxiterations = 10000;
             nt.nudgewindow = 500;
             nt.traininrate = 0.1;
