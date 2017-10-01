@@ -37,11 +37,6 @@ namespace Compression_Year_Project
                 {
                     outputData[i] = 0.0;
                 }
-                //else if (i == outputData.Length - 2)
-                //{
-                //    outputData[i] = 0.0;
-                //}
-                else
                 {                     
                         outputData[i] = inputData[i + 1];
                 }
