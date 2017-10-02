@@ -290,7 +290,6 @@ namespace Compression_Year_Project
                    {
                        File.WriteAllBytes(dlg.FileName, compressedImagefile);
                        compressedLength = new System.IO.FileInfo(dlg.FileName).Length;
-                       //  task.Result._ci.Save(dlg.FileName,jpgEncoder,myEncoderParameters);
                    }
 
                    txtMain.Text += "File saved" + '\n';

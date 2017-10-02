@@ -37,6 +37,7 @@ namespace Compression_Year_Project
                 {
                     outputData[i] = 0.0;
                 }
+                else
                 {                     
                         outputData[i] = inputData[i + 1];
                 }
