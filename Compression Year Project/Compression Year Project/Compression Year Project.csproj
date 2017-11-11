@@ -86,15 +86,29 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="annoverview.xaml.cs">
+      <DependentUpon>annoverview.xaml</DependentUpon>
+    </Compile>
     <Compile Include="BinaryData.cs" />
     <Compile Include="CImage.cs" />
     <Compile Include="Compress.cs" />
     <Compile Include="Extract.cs" />
     <Compile Include="ExtractImage.cs" />
     <Compile Include="ImageCompress.cs" />
+    <Compile Include="page1.xaml.cs">
+      <DependentUpon>page1.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Normalise.cs" />
     <Compile Include="NormaliseImage.cs" />
     <Compile Include="Results.cs" />
+    <Page Include="annoverview.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="page1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

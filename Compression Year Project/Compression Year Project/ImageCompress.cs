@@ -17,11 +17,27 @@ namespace Compression_Year_Project
         private DataSet ds;
         private CImage ci;
        
-        public ImageCompress()
+        public ImageCompress(int[] lsizes)
         { 
-            int[] layersizes = new int[3] {8,18,8};
-            ActivationFunction[] activFunctions = new ActivationFunction[3]{ActivationFunction.None,ActivationFunction.Sigmoid, ActivationFunction.Linear };
+            int[] layersizes = lsizes;
 
+            List<ActivationFunction> af = new List<ActivationFunction>();
+            for (int i = 0; i < layersizes.Length; i++)
+            {
+                if (i == 0)
+                {
+                    af.Add(ActivationFunction.None);
+                }
+                else if (i == layersizes.Length - 1)
+                {
+                    af.Add(ActivationFunction.Linear);
+                }
+                else
+                {
+                    af.Add(ActivationFunction.Sigmoid);
+                }
+            }
+            ActivationFunction[] activFunctions = af.ToArray();
 
             XmlDocument xdoc = new XmlDocument();
             xdoc.Load("ann.xml");
@@ -32,7 +48,7 @@ namespace Compression_Year_Project
             bpnetwork = new BackPropNetwork(layersizes, activFunctions);
             nt = new NetworkTrainer(bpnetwork, ds);
 
-            nt.maxError = 0.00001;
+            nt.maxError = 0.0000001;
             nt.maxiterations = 10000;
             nt.nudgewindow = 500;
             nt.traininrate = 0.1;

@@ -7,7 +7,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="The Compression Project" Height="400" Width="600">
+        Title="The Compression Project" Height="500" Width="790">
     
     
         <DockPanel>
@@ -18,28 +18,14 @@
                     <MenuItem Header="_Exit" Click="Exit_Click"/>
                 </MenuItem>
                 <MenuItem Header="_Help"></MenuItem>
-            </Menu>
+            </Menu>            
+           </WrapPanel>
+        <WrapPanel  DockPanel.Dock="Top">
+            <Button Content="Compress" Width="200" Height="56" Click="Compress_Click"/>
+            <Button Content="Extract"  Width="189" Height="56" Click="Extract_Click"/>
+            <Button Content="Show Results"  Width="185" Height="56" Click="Results_Click"/>
+            <Button Content="Neural Network Sructure" Width="200" Height="56" Click="NN_Click" />
         </WrapPanel>
-        <xctk:BusyIndicator
-        x:Name="LoadingIndicator"
-        IsBusy="False"
-        >
-            <Canvas Height="347" VerticalAlignment="Top" Width="587" AllowDrop="True" PreviewDrop="Canvas_PreviewDrop"
-                PreviewDragOver="Canvas_PreviewDragOver"
-                PreviewDragEnter="Canvas_PreviewDragOver">
-            <Button Content="Compress" Width="212" Height="56" Click="Compress_Click"/>
-            <Button Content="Extract" Canvas.Left="212" Width="189" Height="56" Click="Extract_Click"/>
-            <Button Content="Show Results" Canvas.Left="401" Width="185" Height="56" Click="Results_Click"/>
-            <ScrollViewer Name="scroll"
-              VerticalScrollBarVisibility="Visible" 
-              Canvas.Top="56" Height="269" Width="585" Canvas.Left="1">
-            <TextBlock FontSize="14" x:Name="txtMain" Padding="0,0,1000,0"/>
-            </ScrollViewer>
-            <Button  Style="{StaticResource MaterialDesignFloatingActionButton}" Canvas.Left="502" Canvas.Top="252" Width="54" Height="54" FontSize="36" Click="OpenFile_Click">
-                <materialDesign:PackIcon Kind="Plus" Height="28" Width="28" />
-            </Button>
-        </Canvas>
-
-        </xctk:BusyIndicator>
+        <Frame x:Name="FMain" Margin="0,5,0,0" NavigationUIVisibility="Hidden"/>
     </DockPanel>
 </Window>

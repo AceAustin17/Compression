@@ -19,13 +19,27 @@ namespace Compression_Year_Project
         private Random r = new Random();
         private List<string> ranVariable = new List<string>();
         private List <KeyValuePair<string, string>> legendlist = new List<KeyValuePair<string, string>>();
-        public CompressText()
+        public CompressText(int[] numlayers)
         {
-            int[] layersizes = new int[10] { 1,10,9,8,7,5,4,3,2,1 };
-            ActivationFunction[] activFunctions = new ActivationFunction[10]{ ActivationFunction.None,ActivationFunction.Gaussian,ActivationFunction.Sigmoid,ActivationFunction.Sigmoid,ActivationFunction.Sigmoid,ActivationFunction.Sigmoid,ActivationFunction.Sigmoid,ActivationFunction.Sigmoid,ActivationFunction.Sigmoid,
-                ActivationFunction.Linear };
-          
+            int[] layersizes = numlayers;
+            List<ActivationFunction> af = new List<ActivationFunction>();
 
+            for (int i = 0; i < layersizes.Length; i++)
+            {
+                if (i == 0)
+                {
+                    af.Add(ActivationFunction.None);
+                }
+                else if( i == layersizes.Length-1)
+                {
+                    af.Add(ActivationFunction.Linear);
+                }
+                else
+                {
+                    af.Add(ActivationFunction.Sigmoid);
+                }
+            }
+            ActivationFunction[] activFunctions = af.ToArray();
             XmlDocument xdoc = new XmlDocument();
             xdoc.Load("ann.xml");
 

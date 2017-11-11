@@ -32,7 +32,5 @@ namespace Compression_Year_Project
 
             return "The amount of data saved is " + Math.Round(saved) + "%";
         }
-
-
     }
 }

@@ -1,0 +1,30 @@
+﻿<Page x:Class="Compression_Year_Project.page1"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Compression_Year_Project"
+      xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      mc:Ignorable="d" 
+      Title="page1">
+
+    <xctk:BusyIndicator
+        x:Name="LoadingIndicator"
+        IsBusy="False" Margin="0,0,0,76"
+        >
+        <Canvas Height="350" VerticalAlignment="Top" Width="760" AllowDrop="True" PreviewDrop="Canvas_PreviewDrop"
+                PreviewDragOver="Canvas_PreviewDragOver"
+                PreviewDragEnter="Canvas_PreviewDragOver">
+            <ScrollViewer Name="scroll"
+              VerticalScrollBarVisibility="Visible" 
+              Height="350" Width="760" Canvas.Left="1">
+            <TextBlock FontSize="14" x:Name="txtMain" Padding="0,0,0,0"/>
+            </ScrollViewer>
+            <Button  Style="{StaticResource MaterialDesignFloatingActionButton}" Canvas.Left="700" Canvas.Top="280" Width="54" Height="54" FontSize="36" Click="OpenFile_Click">
+                <materialDesign:PackIcon Kind="Plus" Height="28" Width="28" />
+            </Button>
+        </Canvas>
+
+    </xctk:BusyIndicator>
+</Page>
