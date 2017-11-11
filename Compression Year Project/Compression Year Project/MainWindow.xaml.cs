@@ -16,10 +16,12 @@ namespace Compression_Year_Project
     public partial class MainWindow : Window
     {
         page1 p1;
+        Annoverview an;
         public MainWindow()
         {
             InitializeComponent();
             p1 = new page1();
+            an = new Annoverview();
             FMain.Content = p1;
         }
         private void Exit_Click(object sender, RoutedEventArgs e)
@@ -50,7 +52,7 @@ namespace Compression_Year_Project
 
         private void NN_Click(object sender, RoutedEventArgs e)
         {
-            FMain.Content = new annoverview();
+            FMain.Content = an;
         }
     }
 }
