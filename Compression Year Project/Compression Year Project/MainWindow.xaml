@@ -7,17 +7,18 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="The Compression Project" Height="500" Width="790">
+        Title="The Compression Project" Height="520" Width="790">
     
     
         <DockPanel>
         <WrapPanel DockPanel.Dock="Top">
             <Menu>
-                <MenuItem Header="_File">
+                <MenuItem Header="_Home" Click="Home_Click"></MenuItem>
+                    <MenuItem Header="_File">
                     <MenuItem Header="_Open" Click="OpenFile_Click"/>
                     <MenuItem Header="_Exit" Click="Exit_Click"/>
                 </MenuItem>
-                <MenuItem Header="_Help"></MenuItem>
+                <MenuItem Header="_Help" Click="Help_Click"></MenuItem>
             </Menu>            
            </WrapPanel>
         <WrapPanel  DockPanel.Dock="Top">

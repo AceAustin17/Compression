@@ -21,7 +21,7 @@ namespace Compression_Year_Project
         {
             InitializeComponent();
             p1 = new page1();
-            an = new Annoverview();
+            an = new Annoverview(p1);
             FMain.Content = p1;
         }
         private void Exit_Click(object sender, RoutedEventArgs e)
@@ -53,6 +53,16 @@ namespace Compression_Year_Project
         private void NN_Click(object sender, RoutedEventArgs e)
         {
             FMain.Content = an;
+        }
+
+        private void Home_Click(object sender, RoutedEventArgs e)
+        {
+            FMain.Content = p1;
+        }
+
+        private void Help_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show("You may only use text and imgage files, specifically .jpeg and .txt");
         }
     }
 }

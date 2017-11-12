@@ -5,7 +5,6 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:graphsharp="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
       xmlns:zoom="clr-namespace:WPFExtensions.Controls;assembly=WPFExtensions"    
-      xmlns:tree="clr-namespace:GraphSharp.Algorithms.Layout.Simple.Tree;assembly=GraphSharp"
       mc:Ignorable="d" 
       d:DesignHeight="400" d:DesignWidth="600"
       Title="annoverview">
@@ -38,27 +37,26 @@
         <StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label>Number of Layers</Label>
-                <TextBox Width="50" />
+                <TextBox x:Name="numLayers" Width="50" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <Label> Size of Layers:</Label>
-                <TextBox  Width="50" />
+                <Label> Size of Hidden Layers:</Label>
+                <TextBox  x:Name="sizeHidden" Width="50" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Enter" Width="80" Height="30" Click="Enter_Click"/>
             </StackPanel>
         </StackPanel>
-        <zoom:ZoomControl Margin="0,60,0,0">
+        <zoom:ZoomControl Margin="0,90,0,0">
             <graphsharp:GraphLayout x:Name="graphLayout"
                                 Graph="{Binding Path=GraphToVisualize}"
-                                LayoutAlgorithmType="Tree"
+                                LayoutAlgorithmType="EfficientSugiyama"
                                 OverlapRemovalAlgorithmType="FSA"
-                                HighlightAlgorithmType="Simple" RenderTransformOrigin="0.568,0.506">
-                <graphsharp:GraphLayout.LayoutParameters>
-                    <tree:SimpleTreeLayoutParameters Direction="LeftToRight"></tree:SimpleTreeLayoutParameters>
-                </graphsharp:GraphLayout.LayoutParameters>
+                                HighlightAlgorithmType="Simple" RenderTransformOrigin="0.568,0.506">                
             </graphsharp:GraphLayout>
 
         </zoom:ZoomControl>            
 
     </Grid>
-    
-    
+        
 </Page>

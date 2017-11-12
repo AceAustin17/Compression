@@ -17,6 +17,8 @@ namespace Compression_Year_Project
         long compressedLength = 0;
         long orignaLength = 0;
         string fileType;
+        public int numlayers = 0;
+        public int sizehidden = 0;
         public page1()
         {
             InitializeComponent();
@@ -222,9 +224,26 @@ namespace Compression_Year_Project
                     case ".txt":
                         Task.Factory.StartNew(() =>
                         {
-                            int[] ar = new int[5] { 1, 2, 3, 4, 1 };
-                            CompressText cmp = new CompressText(ar);
-                            return cmp;
+                            if(numlayers !=0)
+                            {
+                                int[] ar = new int[numlayers+2];
+                                ar[0] = 1;
+                                ar[ar.Length - 1] = 1;
+                                for(int i =1;i < ar.Length-1;i++)
+                                {
+                                    ar[i] = sizehidden;
+
+                                }
+                                CompressText cmp = new CompressText(ar);
+                                return cmp; 
+                            }
+                            else
+                            {
+                                int[] ar = new int[5] { 1, 5, 5, 5, 1 };
+                                CompressText cmp = new CompressText(ar);
+                                return cmp;
+                            }
+                           
                         }
                         ).ContinueWith((task) =>
                         {
@@ -259,9 +278,25 @@ namespace Compression_Year_Project
                     case ".png":
                         Task.Factory.StartNew(() =>
                         {
-                            int[] ar = new int[3] { 8, 24, 8 };
-                            ImageCompress cmp = new ImageCompress(ar);
-                            return cmp;
+                            if (numlayers != 0)
+                            {
+                                int[] ar = new int[numlayers];
+                                ar[0] = 8;
+                                ar[ar.Length - 1] = 8;
+                                for (int i = 1; i < ar.Length - 1; i++)
+                                {
+                                    ar[i] = sizehidden;
+
+                                }
+                                ImageCompress cmp = new ImageCompress(ar);
+                                return cmp;
+                            }
+                            else
+                            {
+                                int[] ar = new int[3] { 8, 18,8 };
+                                ImageCompress cmp = new ImageCompress(ar);
+                                return cmp;
+                            }
                         }
                ).ContinueWith((task) =>
                {
